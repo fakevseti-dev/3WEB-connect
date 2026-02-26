@@ -2,73 +2,42 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- CRITICAL: proper viewport for fullscreen mobile, no scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>TRUST TAP • CRYPTO WALLET GAME</title>
-    <!-- fonts unchanged -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* all visual effects EXACTLY preserved, only performance optimizations added */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* prevent tap highlight (still same) */
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Прибрано стандартне підсвічування тапу */
         }
 
-        /* CRITICAL FIX: fullscreen stable height + GPU layer */
-        html, body {
-            width: 100%;
-            height: 100dvh;
-            height: 100vh; /* fallback */
-            margin: 0;
-            padding: 0;
+        body {
             background: #030712;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* prevent pull-to-refresh and scroll chaining */
-            overscroll-behavior: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            /* force GPU compositing */
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-            will-change: transform;
+            /* Замінено vh на dvh для коректного відображення на мобільних */
+            min-height: 100dvh;
+            padding: 1rem;
+            overflow-x: hidden;
         }
 
-        body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            /* ensure no extra spacing */
-            padding: 0;
-        }
-
-        /* main container – exact same design, only height fix & GPU */
         .game-container {
             max-width: 460px;
             width: 100%;
-            height: 100dvh;
-            height: 100vh;
             background: linear-gradient(145deg, #0f1a2f, #030a18);
             border-radius: 3rem 3rem 2rem 2rem;
             padding: 1.8rem 1.5rem 2rem 1.5rem;
-            /* identical shadow – but we add will-change for performance */
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e3a5f inset, 0 0 30px rgba(59, 130, 246, 0.2);
             color: #ffffff;
             position: relative;
-            overflow-y: auto; /* enable scroll inside if needed, but content now full */
-            overflow-x: hidden;
-            /* GPU optimization */
-            transform: translateZ(0);
-            -webkit-transform: translateZ(0);
-            will-change: transform, opacity;
-            /* force layer */
-            isolation: isolate;
+            overflow: hidden;
         }
 
-        /* handwritten background – fully preserved, only GPU added */
         .handwritten-bg {
             position: absolute;
             top: 0;
@@ -78,8 +47,6 @@
             pointer-events: none;
             z-index: 0;
             opacity: 0.25;
-            will-change: transform; /* optimize */
-            transform: translateZ(0);
         }
 
         .handwritten-bg span {
@@ -88,23 +55,20 @@
             font-weight: 300;
             color: #3b82f6;
             font-family: 'Caveat', 'Kalam', 'Comic Sans MS', cursive, sans-serif;
-            transform: rotate(calc(var(--r) * 1deg)) translateZ(0);
+            transform: rotate(calc(var(--r) * 1deg));
             animation: floatT 8s infinite alternate;
             animation-delay: calc(var(--d) * -1s);
             text-shadow: 0 0 5px #3b82f6;
             opacity: 0.6;
             user-select: none;
-            will-change: transform, opacity; /* animation hint */
         }
 
-        /* keyframes exactly same – but now GPU-friendly (transform only) */
         @keyframes floatT {
-            0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1) translateZ(0); opacity: 0.4; }
-            50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1) translateZ(0); opacity: 0.7; }
-            100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9) translateZ(0); opacity: 0.5; }
+            0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; }
+            50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.7; }
+            100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; }
         }
 
-        /* pseudo-elements unchanged – but container already has layer */
         .game-container::after {
             content: '';
             position: absolute;
@@ -129,14 +93,12 @@
             pointer-events: none;
         }
 
-        /* top bar – exact same look, only add will-change */
         .top-bar {
             display: flex;
             justify-content: center;
             align-items: center;
             background: rgba(20, 40, 70, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* preserve blur, but now GPU */
             padding: 0.9rem 1.26rem;
             border-radius: 2.7rem;
             border: 1px solid rgba(59, 130, 246, 0.5);
@@ -147,9 +109,6 @@
             width: 78%;
             margin-left: auto;
             margin-right: auto;
-            /* GPU */
-            transform: translateZ(0);
-            will-change: transform, opacity;
         }
 
         .balance-box {
@@ -201,7 +160,6 @@
         .energy-panel {
             background: rgba(20, 40, 70, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 1.12rem;
             padding: 0.5rem 0.87rem;
             margin-bottom: 1.2rem;
@@ -215,8 +173,6 @@
             width: 90%;
             margin-left: auto;
             margin-right: auto;
-            transform: translateZ(0);
-            will-change: transform;
         }
 
         .energy-left {
@@ -255,7 +211,6 @@
             border-radius: 10px;
             box-shadow: 0 0 9.3px #ffffff, 0 0 18.6px #3b82f6;
             transition: width 0.3s ease;
-            will-change: width;
         }
 
         .regen-tip {
@@ -276,13 +231,9 @@
             justify-content: center;
             margin: 0.5rem 0 1.2rem;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
             position: relative;
             filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.8));
             z-index: 5;
-            /* GPU */
-            transform: translateZ(0);
-            will-change: transform;
         }
 
         .big-coin {
@@ -294,16 +245,12 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2); /* Прибрано all для оптимізації */
             border: 2px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 40px #3b82f6, 0 0 80px rgba(59, 130, 246, 0.4);
             animation: coinGlow 3s infinite alternate, modernFloat 5s infinite ease-in-out;
-            /* GPU */
-            transform: translateZ(0);
-            will-change: transform, box-shadow;
         }
 
-        /* animations unchanged, but now GPU-accelerated */
         @keyframes coinGlow {
             0% { box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 30px #3b82f6, 0 0 60px rgba(59, 130, 246, 0.3); }
             100% { box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.6) inset, 0 0 60px #3b82f6, 0 0 100px rgba(59, 130, 246, 0.7); }
@@ -319,7 +266,6 @@
             box-shadow: inset 0 10px 30px rgba(255, 255, 255, 0.4);
             z-index: 1;
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
         }
 
         .big-coin::after {
@@ -331,24 +277,23 @@
             opacity: 0.6;
             filter: blur(20px);
             z-index: -1;
-            transition: opacity 0.3s ease;
             animation: outerGlow 3s infinite alternate;
         }
 
         @keyframes outerGlow {
-            0% { opacity: 0.5; filter: blur(20px); }
-            100% { opacity: 0.8; filter: blur(25px); }
+            0% { opacity: 0.5; }
+            100% { opacity: 0.8; }
         }
 
         @keyframes modernFloat {
-            0% { transform: translateY(0px) rotate(0deg) translateZ(0); }
-            25% { transform: translateY(-5px) rotate(1deg) translateZ(0); }
-            75% { transform: translateY(5px) rotate(-1deg) translateZ(0); }
-            100% { transform: translateY(0px) rotate(0deg) translateZ(0); }
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(1deg); }
+            75% { transform: translateY(5px) rotate(-1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
 
         .tap-zone:active .big-coin {
-            transform: scale(0.92) translateY(5px) translateZ(0);
+            transform: scale(0.92) translateY(5px);
             box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.8) inset, 0 0 70px #3b82f6, 0 0 120px rgba(59, 130, 246, 0.9);
         }
 
@@ -360,12 +305,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transform: translateY(0) translateZ(0);
+            transform: translateY(0);
             transition: transform 0.2s ease;
         }
 
         .tap-zone:active .trust-logo {
-            transform: translateY(3px) translateZ(0);
+            transform: translateY(3px);
         }
 
         .letter-t {
@@ -375,14 +320,14 @@
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6, 5px 5px 0 rgba(0, 0, 0, 0.3);
             line-height: 1;
             font-family: 'Inter', 'Arial Black', sans-serif;
-            transform: scale(1) translateZ(0);
+            transform: scale(1);
             animation: letterSuperPulse 2.5s infinite alternate;
             letter-spacing: -5px;
         }
 
         @keyframes letterSuperPulse {
-            0% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6; transform: scale(1) translateZ(0); }
-            100% { text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(255, 255, 255, 0.8), 0 0 120px #3b82f6, 0 0 160px #3b82f6; transform: scale(1.05) translateZ(0); }
+            0% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6; transform: scale(1); }
+            100% { text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(255, 255, 255, 0.8), 0 0 120px #3b82f6, 0 0 160px #3b82f6; transform: scale(1.05); }
         }
 
         .floating-container {
@@ -403,7 +348,6 @@
             pointer-events: none;
             animation: modernFloatUp 0.9s ease-out forwards;
             z-index: 20;
-            will-change: transform, opacity;
         }
 
         .floating-value::after {
@@ -413,15 +357,14 @@
         }
 
         @keyframes modernFloatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8) translateZ(0); filter: blur(0); }
-            50% { opacity: 0.9; transform: translateY(-40px) scale(1.2) translateZ(0); filter: blur(1px); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.6) translateZ(0); filter: blur(3px); }
+            0% { opacity: 1; transform: translateY(0) scale(0.8); filter: blur(0); }
+            50% { opacity: 0.9; transform: translateY(-40px) scale(1.2); filter: blur(1px); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.6); filter: blur(3px); }
         }
 
         .top-ref-bar {
             background: rgba(20, 40, 70, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(59, 130, 246, 0.5);
             border-radius: 1.12rem;
             padding: 0.7rem 1.2rem;
@@ -431,18 +374,16 @@
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition: all 0.1s ease;
-            transform: translateZ(0);
-            will-change: transform, box-shadow;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .top-ref-bar:hover {
-            transform: translateY(-1px) translateZ(0);
+            transform: translateY(-1px);
             box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
         }
 
         .top-ref-bar:active {
-            transform: translateY(3px) translateZ(0);
+            transform: translateY(3px);
             box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
         }
 
@@ -466,7 +407,6 @@
         .top-ref-right {
             background: rgba(37, 99, 235, 0.4);
             backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
             padding: 0.3rem 0.8rem;
             border-radius: 1rem;
             font-weight: 600;
@@ -486,7 +426,6 @@
         .feature-card {
             background: rgba(20, 40, 70, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(59, 130, 246, 0.5);
             border-radius: 1.12rem;
             padding: 0.7rem 1rem;
@@ -496,18 +435,16 @@
             justify-content: space-between;
             box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 12px rgba(59, 130, 246, 0.2);
             cursor: pointer;
-            transition: all 0.1s ease;
-            transform: translateZ(0);
-            will-change: transform;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-1px) translateZ(0);
+            transform: translateY(-1px);
             box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
         }
 
         .feature-card:active {
-            transform: translateY(3px) translateZ(0);
+            transform: translateY(3px);
             box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
         }
 
@@ -548,14 +485,11 @@
         .tasks-section, .upgrade-section {
             background: rgba(15, 25, 45, 0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border-radius: 1.12rem;
             padding: 1rem 0.8rem;
             margin: 1rem 0;
             border: 1px solid rgba(59, 130, 246, 0.5);
             box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(59, 130, 246, 0.2);
-            transform: translateZ(0);
-            will-change: transform;
         }
 
         .section-header {
@@ -598,18 +532,16 @@
             border: 1px solid rgba(59, 130, 246, 0.3);
             box-shadow: 0 2.48px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            transition: all 0.1s ease;
-            transform: translateZ(0);
-            will-change: transform;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .upgrade-item:hover, .task-item:hover {
-            transform: translateY(-1px) translateZ(0);
+            transform: translateY(-1px);
             box-shadow: 0 3.48px 0 #0a1a2f, 0 5px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(59, 130, 246, 0.3);
         }
 
         .upgrade-item:active, .task-item:active {
-            transform: translateY(2px) translateZ(0);
+            transform: translateY(2px);
             box-shadow: 0 1px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
@@ -676,17 +608,15 @@
             border: none;
             box-shadow: 0 3px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border: 1px solid rgba(255, 255, 255, 0.3);
             min-width: 70px;
-            transform: translateZ(0);
-            will-change: transform;
         }
 
         .item-button:active {
-            transform: translateY(2px) translateZ(0);
+            transform: translateY(2px);
             box-shadow: 0 1px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
         }
 
@@ -710,6 +640,28 @@
             border-top: 1px dashed rgba(59, 130, 246, 0.3);
             padding-top: 0.8rem;
             text-shadow: 0 0 5px #3b82f6;
+        }
+
+        /* GPU OPTIMIZATION — SAFE, DOES NOT CHANGE DESIGN */
+        .game-container,
+        .big-coin,
+        .big-coin::before,
+        .trust-logo,
+        .letter-t,
+        .feature-card,
+        .energy-panel,
+        .top-bar,
+        .tasks-section,
+        .upgrade-section {
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            perspective: 1000px;
+        }
+
+        .big-coin::after {
+            will-change: opacity, transform, filter;
+            transform: translateZ(0);
         }
     </style>
 </head>
@@ -781,7 +733,6 @@
             </div>
         </div>
 
-        <!-- БЛОК УЛУЧШЕНИЯ -->
         <div class="upgrade-section">
             <div class="section-header">
                 <span class="section-icon">
@@ -850,7 +801,6 @@
             </div>
         </div>
 
-        <!-- БЛОК ЗАДАНИЯ -->
         <div class="tasks-section">
             <div class="section-header">
                 <span class="section-icon">
@@ -937,32 +887,23 @@
 
     <script>
         (function() {
-            // ========== TELEGRAM WEBAPP FIX ==========
-            if (window.Telegram?.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();          // forces fullscreen
-                Telegram.WebApp.disableVerticalSwipes();
+            // Ініціалізація Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                tg.disableVerticalSwipes();
+                
+                // Хаки для правильного рендеру нижньої частини після розширення
+                requestAnimationFrame(() => {
+                    window.scrollTo(0, 1);
+                    setTimeout(() => window.scrollTo(0, 0), 50);
+                });
             }
-            
-            // ========== FORCE IMMEDIATE FULL RENDER ==========
-            // Force layout to include all content – this ensures bottom content renders immediately
-            window.scrollTo(0, 1);
-            window.scrollTo(0, 0);
-            
-            // also dispatch resize to ensure viewport units update
-            window.dispatchEvent(new Event('resize'));
 
-            // ========== КОНФІГУРАЦІЯ ЕКОНОМІКИ (unchanged) ==========
             const ECONOMY = {
-                usdt: {
-                    decimals: 6,
-                    baseTapValue: 0.0002
-                },
-                energy: {
-                    baseCapacity: 1000,
-                    baseRecovery: 1,
-                    tapCost: 1
-                },
+                usdt: { decimals: 6, baseTapValue: 0.0002 },
+                energy: { baseCapacity: 1000, baseRecovery: 1, tapCost: 1 },
                 upgrades: {
                     damage: [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0],
                     capacity: [1.0, 1.3, 1.6, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0],
@@ -981,22 +922,16 @@
                 }
             };
 
-            // ========== СТАН ГРАВЦЯ ==========
             let player = {
                 balance: 10.500000,
-                
                 damageLevel: 1,
                 capacityLevel: 1,
                 recoveryLevel: 1,
-                
                 energy: ECONOMY.energy.baseCapacity,
                 referrals: 0
             };
 
-            // ========== ДОПОМІЖНІ ФУНКЦІЇ ==========
-            function formatUSDT(value) {
-                return parseFloat(value).toFixed(6);
-            }
+            function formatUSDT(value) { return parseFloat(value).toFixed(6); }
 
             function getCurrentTapValue() {
                 const multiplier = ECONOMY.upgrades.damage[player.damageLevel - 1];
@@ -1013,55 +948,27 @@
                 return ECONOMY.energy.baseRecovery * multiplier;
             }
 
-            function getUpgradePrice(type) {
-                const level = player[`${type}Level`];
-                if (level >= 10) return null;
-                return ECONOMY.upgradePrices[type][level - 1];
-            }
-
-            // ========== ОНОВЛЕННЯ ІНТЕРФЕЙСУ ==========
             function updateUI() {
-                const balanceEl = document.getElementById('balanceDisplay');
-                const energyEl = document.getElementById('energyDisplay');
-                const energyBarFill = document.getElementById('energyBarFill');
-                const regenTip = document.getElementById('regenTip');
-                const tapValueDisplay = document.getElementById('tapValueDisplay');
-                const refCountEl = document.getElementById('refCount');
+                document.getElementById('balanceDisplay').textContent = formatUSDT(player.balance);
                 
-                const damageValue = document.getElementById('damageValue');
-                const damageLevel = document.getElementById('damageLevel');
-                const capacityValue = document.getElementById('capacityValue');
-                const capacityLevel = document.getElementById('capacityLevel');
-                const recoveryValue = document.getElementById('recoveryValue');
-                const recoveryLevel = document.getElementById('recoveryLevel');
-                
-                // Баланс
-                balanceEl.textContent = formatUSDT(player.balance);
-                
-                // Енергія
                 const maxEnergy = getCurrentCapacity();
-                energyEl.textContent = Math.floor(player.energy);
-                energyBarFill.style.width = `${(player.energy / maxEnergy) * 100}%`;
-                regenTip.textContent = `+${getCurrentRecovery().toFixed(1)}/сек`;
+                document.getElementById('energyDisplay').textContent = Math.floor(player.energy);
+                document.getElementById('energyBarFill').style.width = `${(player.energy / maxEnergy) * 100}%`;
+                document.getElementById('regenTip').textContent = `+${getCurrentRecovery().toFixed(1)}/сек`;
                 
-                // Значення тапа
-                tapValueDisplay.textContent = `${getCurrentTapValue()} USDT за тап`;
+                document.getElementById('tapValueDisplay').textContent = `${getCurrentTapValue()} USDT за тап`;
+                document.getElementById('refCount').textContent = player.referrals;
                 
-                // Реферали
-                refCountEl.textContent = player.referrals;
+                document.getElementById('damageValue').textContent = `${ECONOMY.upgrades.damage[player.damageLevel-1].toFixed(1)}x`;
+                document.getElementById('damageLevel').textContent = `ур. ${player.damageLevel}`;
                 
-                // Апгрейди
-                damageValue.textContent = `${ECONOMY.upgrades.damage[player.damageLevel-1].toFixed(1)}x`;
-                damageLevel.textContent = `ур. ${player.damageLevel}`;
+                document.getElementById('capacityValue').textContent = getCurrentCapacity();
+                document.getElementById('capacityLevel').textContent = `ур. ${player.capacityLevel}`;
                 
-                capacityValue.textContent = getCurrentCapacity();
-                capacityLevel.textContent = `ур. ${player.capacityLevel}`;
-                
-                recoveryValue.textContent = `${getCurrentRecovery().toFixed(1)}/сек`;
-                recoveryLevel.textContent = `ур. ${player.recoveryLevel}`;
+                document.getElementById('recoveryValue').textContent = `${getCurrentRecovery().toFixed(1)}/сек`;
+                document.getElementById('recoveryLevel').textContent = `ур. ${player.recoveryLevel}`;
             }
 
-            // ========== ПОКАЗ FLOATING ==========
             function showFloating(text, color) {
                 const container = document.getElementById('floatingContainer');
                 const div = document.createElement('div');
@@ -1075,7 +982,6 @@
                 setTimeout(() => div.remove(), 800);
             }
 
-            // ========== ОБРОБНИК ТАПА ==========
             function handleTap() {
                 if (player.energy < ECONOMY.energy.tapCost) {
                     showFloating('⚡ Нет энергии', '#ffa38b');
@@ -1083,50 +989,35 @@
                 }
                 
                 const tapValue = parseFloat(getCurrentTapValue());
-                
                 player.energy -= ECONOMY.energy.tapCost;
                 player.balance = parseFloat((player.balance + tapValue).toFixed(6));
                 
                 showFloating(`+${tapValue.toFixed(6)}`, '#3b82f6');
                 
                 if (navigator.vibrate) navigator.vibrate(20);
-                
                 updateUI();
             }
 
-            // ========== ФУНКЦІЯ ПОКУПКИ АПГРЕЙДУ ==========
             function purchaseUpgrade(type) {
                 const currentLevel = player[`${type}Level`];
-                
-                if (currentLevel >= 10) {
-                    alert('❌ Достигнут максимальный уровень');
-                    return;
-                }
+                if (currentLevel >= 10) { alert('❌ Достигнут максимальный уровень'); return; }
                 
                 const price = ECONOMY.upgradePrices[type][currentLevel - 1];
-                
                 if (player.balance < price) {
                     const needed = (price - player.balance).toFixed(2);
                     alert(`❌ Недостаточно USDT. Нужно еще ${needed} USDT для улучшения`);
                     return;
                 }
                 
-                const confirmPurchase = confirm(`✅ Подтвердите покупку\nУровень ${currentLevel} → ${currentLevel + 1}\nСтоимость: ${price.toFixed(2)} USDT\nВаш баланс: ${player.balance.toFixed(2)} USDT`);
-                
-                if (confirmPurchase) {
+                if (confirm(`✅ Подтвердите покупку\nУровень ${currentLevel} → ${currentLevel + 1}\nСтоимость: ${price.toFixed(2)} USDT\nВаш баланс: ${player.balance.toFixed(2)} USDT`)) {
                     player.balance = parseFloat((player.balance - price).toFixed(6));
                     player[`${type}Level`]++;
-                    
-                    if (type === 'capacity') {
-                        player.energy = getCurrentCapacity(); // Заповнюємо енергію
-                    }
-                    
+                    if (type === 'capacity') { player.energy = getCurrentCapacity(); }
                     showFloating('✅ Улучшено', '#4ade80');
                     updateUI();
                 }
             }
 
-            // ========== ЗАВДАННЯ ==========
             function handleTaskSubscribe() {
                 player.balance = parseFloat((player.balance + ECONOMY.tasks.subscription).toFixed(6));
                 showFloating(`+${ECONOMY.tasks.subscription.toFixed(2)}`, '#f5c45e');
@@ -1156,82 +1047,53 @@
                 alert('✅ Реферальный код скопирован! +500 энергии');
             }
 
-            // ========== ФОН З БУКВАМИ T ==========
             function createHandwrittenBg() {
                 const bgContainer = document.getElementById('handwrittenBg');
                 if (!bgContainer) return;
-                
                 bgContainer.innerHTML = '';
-                
                 for (let i = 0; i < 60; i++) {
                     const span = document.createElement('span');
                     span.textContent = 'T';
-                    
                     span.style.left = Math.random() * 100 + '%';
                     span.style.top = Math.random() * 100 + '%';
                     span.style.setProperty('--r', (Math.random() * 60) - 30);
                     span.style.setProperty('--d', Math.random() * 5);
                     span.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
                     span.style.opacity = 0.2 + Math.random() * 0.3;
-                    
                     bgContainer.appendChild(span);
                 }
             }
 
-            // ========== ІНІЦІАЛІЗАЦІЯ ==========
             function init() {
                 createHandwrittenBg();
-                
-                // Початковий стан
                 player.energy = getCurrentCapacity();
                 
-                // Обробник тапа
                 document.getElementById('tapButton').addEventListener('click', handleTap);
                 
-                // Обробники для кнопок покращень
                 document.querySelectorAll('.upgrade-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const type = e.target.dataset.type;
-                        purchaseUpgrade(type);
+                        purchaseUpgrade(e.target.dataset.type);
                     });
                 });
                 
-                // Обробники для завдань
                 document.querySelectorAll('.task-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const task = e.target.dataset.task;
-                        
                         switch(task) {
-                            case 'subscribe':
-                                handleTaskSubscribe();
-                                break;
-                            case 'ad':
-                                handleTaskAd();
-                                break;
-                            case 'futures':
-                                handleTaskFutures();
-                                break;
-                            case 'blum':
-                                alert('❌ Квест в разработке');
-                                break;
+                            case 'subscribe': handleTaskSubscribe(); break;
+                            case 'ad': handleTaskAd(); break;
+                            case 'futures': handleTaskFutures(); break;
+                            case 'blum': alert('❌ Квест в разработке'); break;
                         }
                     });
                 });
                 
-                // Інші обробники
                 document.getElementById('topRefBar').addEventListener('click', handleInviteFriend);
+                document.getElementById('rankCard').addEventListener('click', () => { alert('🏆 Ваш ранг: бронза'); });
+                document.getElementById('referralsCard').addEventListener('click', () => { alert('👥 Ваши рефералы: ' + player.referrals); });
                 
-                document.getElementById('rankCard').addEventListener('click', () => {
-                    alert('🏆 Ваш ранг: бронза');
-                });
-                
-                document.getElementById('referralsCard').addEventListener('click', () => {
-                    alert('👥 Ваши рефералы: ' + player.referrals);
-                });
-                
-                // Регенерація енергії
                 setInterval(() => {
                     const maxEnergy = getCurrentCapacity();
                     if (player.energy < maxEnergy) {
@@ -1241,7 +1103,7 @@
                 }, 1000);
                 
                 updateUI();
-                console.log('✅ Trust Wallet з економікою USDT');
+                console.log('✅ Trust Wallet з економікою USDT та оптимізацією FPS');
             }
 
             init();
