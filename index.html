@@ -12,7 +12,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            -webkit-tap-highlight-color: transparent; /* Прибрано стандартне підсвічування тапу */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -20,7 +20,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Замінено vh на dvh для коректного відображення на мобільних */
             min-height: 100dvh;
             padding: 1rem;
             overflow-x: hidden;
@@ -81,41 +80,28 @@
             z-index: 0;
         }
 
-        .game-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -20%;
-            width: 140%;
-            height: 140%;
-            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.15), transparent 70%);
-            z-index: 0;
-            pointer-events: none;
+        /* --- ОПТИМІЗАЦІЯ ПРОДУКТИВНОСТІ: Замінили backdrop-filter на щільний rgba --- */
+        .top-bar, .energy-panel, .top-ref-bar, .feature-card, .tasks-section, .upgrade-section {
+            background: rgba(20, 40, 70, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            position: relative;
+            z-index: 2;
         }
 
         .top-bar {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: rgba(20, 40, 70, 0.7);
-            backdrop-filter: blur(10px);
             padding: 0.9rem 1.26rem;
             border-radius: 2.7rem;
-            border: 1px solid rgba(59, 130, 246, 0.5);
             margin-bottom: 1.2rem;
-            box-shadow: 0 7.18px 0 #0a1a2f, 0 8.97px 17.94px rgba(0, 0, 0, 0.4), 0 0 13.45px rgba(59, 130, 246, 0.3);
-            position: relative;
-            z-index: 2;
+            box-shadow: 0 7px 0 #0a1a2f, 0 8px 15px rgba(0, 0, 0, 0.4), 0 0 10px rgba(59, 130, 246, 0.3);
             width: 78%;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .balance-box {
-            display: flex;
-            align-items: center;
-            gap: 0.54rem;
-        }
+        .balance-box { display: flex; align-items: center; gap: 0.54rem; }
 
         .usdt-icon {
             display: flex;
@@ -128,7 +114,7 @@
             font-weight: 700;
             font-size: 0.8rem;
             color: white;
-            box-shadow: 0 0 13.45px #26a17b, 0 3.59px 0 #0d4d3a;
+            box-shadow: 0 0 10px #26a17b;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
@@ -136,63 +122,34 @@
             font-size: 1.08rem;
             font-weight: 600;
             color: #ffffff;
-            text-shadow: 0 0 8.97px #3b82f6;
-            letter-spacing: 0.45px;
+            text-shadow: 0 0 8px #3b82f6;
         }
 
         .balance-amount {
             font-size: 0.9rem;
             font-weight: 600;
             color: #ffffff;
-            letter-spacing: 0.45px;
-            text-shadow: 0 0 8.97px #3b82f6;
-            margin-left: -0.18rem;
+            text-shadow: 0 0 8px #3b82f6;
         }
 
-        .balance-amount::after {
-            content: ' USDT';
-            color: #aaccff;
-            font-weight: 400;
-            font-size: 0.7rem;
-            margin-left: 2px;
-        }
+        .balance-amount::after { content: ' USDT'; color: #aaccff; font-size: 0.7rem; margin-left: 2px; }
 
         .energy-panel {
-            background: rgba(20, 40, 70, 0.7);
-            backdrop-filter: blur(10px);
             border-radius: 1.12rem;
             padding: 0.5rem 0.87rem;
             margin-bottom: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid rgba(59, 130, 246, 0.5);
             box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4);
-            position: relative;
-            z-index: 2;
             width: 90%;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .energy-left {
-            display: flex;
-            align-items: center;
-            gap: 0.19rem;
-        }
-
-        .bolt {
-            font-size: 0.87rem;
-            color: #ffffff;
-            filter: drop-shadow(0 0 5px #ffffff);
-        }
-
-        .energy-count {
-            font-weight: 700;
-            font-size: 0.81rem;
-            color: #ffffff;
-            text-shadow: 0 0 9.3px #ffffff, 0 0 18.6px #3b82f6;
-        }
+        .energy-left { display: flex; align-items: center; gap: 0.2rem; }
+        .bolt { font-size: 0.87rem; color: #ffffff; filter: drop-shadow(0 0 5px #ffffff); }
+        .energy-count { font-weight: 700; font-size: 0.81rem; color: #ffffff; text-shadow: 0 0 5px #ffffff; }
 
         .energy-bar-bg {
             width: 100px;
@@ -201,7 +158,6 @@
             border-radius: 10px;
             overflow: hidden;
             margin: 0 8px;
-            box-shadow: inset 0 1.24px 3.1px rgba(0, 0, 0, 0.5);
         }
 
         .energy-bar-fill {
@@ -209,22 +165,12 @@
             width: 80%;
             background: linear-gradient(90deg, #ffffff, #aaccff, #3b82f6);
             border-radius: 10px;
-            box-shadow: 0 0 9.3px #ffffff, 0 0 18.6px #3b82f6;
+            box-shadow: 0 0 10px #3b82f6;
             transition: width 0.3s ease;
         }
 
-        .regen-tip {
-            color: #ffffff;
-            font-size: 0.6rem;
-            text-shadow: 0 0 6.2px #ffffff, 0 0 12.4px #3b82f6;
-        }
-
-        .tap-value {
-            color: #aaccff;
-            font-size: 0.7rem;
-            text-align: center;
-            margin: 0.2rem 0 0.5rem;
-        }
+        .regen-tip { color: #ffffff; font-size: 0.6rem; }
+        .tap-value { color: #aaccff; font-size: 0.7rem; text-align: center; margin: 0.2rem 0 0.5rem; }
 
         .tap-zone {
             display: flex;
@@ -232,10 +178,10 @@
             margin: 0.5rem 0 1.2rem;
             cursor: pointer;
             position: relative;
-            filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.8));
             z-index: 5;
         }
 
+        /* --- ОПТИМІЗАЦІЯ АНІМАЦІЇ МОНЕТИ (Прибрали зміну box-shadow) --- */
         .big-coin {
             width: 220px;
             height: 220px;
@@ -245,15 +191,28 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2); /* Прибрано all для оптимізації */
+            transition: transform 0.1s;
             border: 2px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 40px #3b82f6, 0 0 80px rgba(59, 130, 246, 0.4);
-            animation: coinGlow 3s infinite alternate, modernFloat 5s infinite ease-in-out;
+            /* Статична тінь замість анімованої */
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 40px rgba(59, 130, 246, 0.5);
+            animation: modernFloat 5s infinite ease-in-out;
         }
 
-        @keyframes coinGlow {
-            0% { box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 30px #3b82f6, 0 0 60px rgba(59, 130, 246, 0.3); }
-            100% { box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.6) inset, 0 0 60px #3b82f6, 0 0 100px rgba(59, 130, 246, 0.7); }
+        /* Світіння тепер робиться через opacity (літає на мобільних) */
+        .big-coin::after {
+            content: '';
+            position: absolute;
+            inset: -15px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.6), transparent 70%);
+            z-index: -1;
+            animation: pulseGlow 2.5s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.5; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
         }
 
         .big-coin::before {
@@ -263,266 +222,117 @@
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 80%);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: inset 0 10px 30px rgba(255, 255, 255, 0.4);
             z-index: 1;
-            backdrop-filter: blur(4px);
-        }
-
-        .big-coin::after {
-            content: '';
-            position: absolute;
-            inset: -15px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.7), transparent 70%);
-            opacity: 0.6;
-            filter: blur(20px);
-            z-index: -1;
-            animation: outerGlow 3s infinite alternate;
-        }
-
-        @keyframes outerGlow {
-            0% { opacity: 0.5; }
-            100% { opacity: 0.8; }
         }
 
         @keyframes modernFloat {
-            0% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-5px) rotate(1deg); }
-            75% { transform: translateY(5px) rotate(-1deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
         }
 
-        .tap-zone:active .big-coin {
-            transform: scale(0.92) translateY(5px);
-            box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.8) inset, 0 0 70px #3b82f6, 0 0 120px rgba(59, 130, 246, 0.9);
-        }
-
-        .trust-logo {
-            position: relative;
-            z-index: 10;
-            width: 140px;
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: translateY(0);
-            transition: transform 0.2s ease;
-        }
-
-        .tap-zone:active .trust-logo {
-            transform: translateY(3px);
-        }
-
+        .tap-zone:active .big-coin { transform: scale(0.92); }
+        .trust-logo { position: relative; z-index: 10; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
         .letter-t {
             font-size: 8rem;
             font-weight: 900;
             color: #ffffff;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6, 5px 5px 0 rgba(0, 0, 0, 0.3);
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px #3b82f6;
             line-height: 1;
-            font-family: 'Inter', 'Arial Black', sans-serif;
-            transform: scale(1);
             animation: letterSuperPulse 2.5s infinite alternate;
             letter-spacing: -5px;
         }
 
         @keyframes letterSuperPulse {
-            0% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6; transform: scale(1); }
-            100% { text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(255, 255, 255, 0.8), 0 0 120px #3b82f6, 0 0 160px #3b82f6; transform: scale(1.05); }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
         }
 
-        .floating-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            height: 40px;
-            margin-top: -10px;
-            z-index: 15;
-        }
-
+        .floating-container { position: relative; display: flex; justify-content: center; height: 40px; margin-top: -10px; z-index: 15; }
+        
+        /* --- ОПТИМІЗАЦІЯ ЦИФР ТАПУ (Прибрали filter: blur з анімації) --- */
         .floating-value {
             position: absolute;
             font-weight: 800;
             font-size: 1.8rem;
             color: #ffffff;
-            text-shadow: 0 0 30px #3b82f6, 0 0 60px #ffffff, 0 5px 15px #000000;
+            text-shadow: 0 0 20px #3b82f6, 0 5px 10px #000000;
             pointer-events: none;
-            animation: modernFloatUp 0.9s ease-out forwards;
+            animation: modernFloatUp 0.8s ease-out forwards;
             z-index: 20;
         }
-
-        .floating-value::after {
-            content: ' USDT';
-            font-size: 0.9rem;
-            color: #aaccff;
-        }
+        .floating-value::after { content: ' USDT'; font-size: 0.9rem; color: #aaccff; }
 
         @keyframes modernFloatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); filter: blur(0); }
-            50% { opacity: 0.9; transform: translateY(-40px) scale(1.2); filter: blur(1px); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.6); filter: blur(3px); }
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            50% { opacity: 0.9; transform: translateY(-40px) scale(1.1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.4); }
         }
 
         .top-ref-bar {
-            background: rgba(20, 40, 70, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.5);
             border-radius: 1.12rem;
             padding: 0.7rem 1.2rem;
             margin: 1rem 0 1rem;
-            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 12px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 3.72px 0 #0a1a2f, 0 6px 10px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
-        .top-ref-bar:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .top-ref-bar:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .top-ref-left {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .top-ref-left span {
-            font-size: 1rem;
-            color: #ffffff;
-            filter: drop-shadow(0 0 5px #3b82f6);
-            font-weight: 500;
-        }
-
-        .top-ref-left span:first-child {
-            font-size: 1.2rem;
-        }
-
+        .top-ref-bar:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
+        .top-ref-left { display: flex; align-items: center; gap: 0.8rem; }
+        .top-ref-left span { font-size: 1rem; color: #ffffff; font-weight: 500; }
+        .top-ref-left span:first-child { font-size: 1.2rem; }
         .top-ref-right {
             background: rgba(37, 99, 235, 0.4);
-            backdrop-filter: blur(5px);
             padding: 0.3rem 0.8rem;
             border-radius: 1rem;
             font-weight: 600;
             font-size: 0.9rem;
             color: #ffffff;
             border: 1px solid rgba(59, 130, 246, 0.6);
-            box-shadow: 0 0 10px #3b82f6;
         }
 
+        /* --- ФІКС ВЕРСТКИ ДЛЯ КАРТОК (Щоб текст не наїжджав) --- */
         .feature-grid {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.5rem; /* Зазор між двома картками */
             margin: 0.8rem 0 1.2rem;
             justify-content: center;
         }
 
         .feature-card {
-            background: rgba(20, 40, 70, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.5);
             border-radius: 1.12rem;
-            padding: 0.7rem 1rem;
+            padding: 0.7rem 0.8rem; /* Трохи зменшили бокові відступи */
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 12px rgba(59, 130, 246, 0.2);
-            cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            gap: 5px; /* Зазор між іконкою з текстом і значенням */
+            box-shadow: 0 3.72px 0 #0a1a2f;
         }
 
-        .feature-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .feature-card:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .card-left {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .card-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-        }
-
-        .card-icon svg {
-            width: 22px;
-            height: 22px;
-            filter: brightness(0) invert(1);
-        }
-
-        .card-label {
-            font-size: 0.9rem;
-            color: #aaccff;
-            text-shadow: 0 0 3px #3b82f6;
-            font-weight: 500;
-        }
-
-        .card-value {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #ffffff;
-            text-shadow: 0 0 6px #3b82f6;
-        }
+        .feature-card:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
+        .card-left { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
+        .card-icon svg { width: 20px; height: 20px; filter: brightness(0) invert(1); flex-shrink: 0; }
+        .card-label { font-size: 0.85rem; color: #aaccff; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-value { font-weight: 600; font-size: 0.85rem; color: #ffffff; flex-shrink: 0; }
 
         .tasks-section, .upgrade-section {
-            background: rgba(15, 25, 45, 0.7);
-            backdrop-filter: blur(10px);
             border-radius: 1.12rem;
             padding: 1rem 0.8rem;
             margin: 1rem 0;
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 3.72px 0 #0a1a2f;
         }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            padding-left: 0.3rem;
-        }
+        .section-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-left: 0.3rem; }
+        .section-icon svg { width: 24px; height: 24px; filter: brightness(0) invert(1); }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: #ffffff; text-shadow: 0 0 10px #3b82f6; }
 
-        .section-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-        }
-
-        .section-icon svg {
-            width: 24px;
-            height: 24px;
-            filter: brightness(0) invert(1);
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #ffffff;
-            text-shadow: 0 0 10px #3b82f6;
-        }
-
+        /* --- ФІКС ВЕРСТКИ ДЛЯ ЕЛЕМЕНТІВ СПИСКУ (Щоб кнопки не вилазили) --- */
         .upgrade-item, .task-item {
-            background: rgba(10, 20, 35, 0.8);
+            background: rgba(10, 20, 35, 0.95);
             border-radius: 0.9rem;
             padding: 0.7rem 0.8rem;
             margin-bottom: 0.6rem;
@@ -530,138 +340,73 @@
             align-items: center;
             justify-content: space-between;
             border: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 2.48px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            box-shadow: 0 2.48px 0 #0a1a2f;
+            gap: 0.5rem; /* Зазор між лівою і правою частиною */
         }
 
-        .upgrade-item:hover, .task-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3.48px 0 #0a1a2f, 0 5px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(59, 130, 246, 0.3);
-        }
-
-        .upgrade-item:active, .task-item:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
+        .upgrade-item:active, .task-item:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
 
         .item-left {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.5rem;
             flex: 1;
+            min-width: 0; /* ДОЗВОЛЯЄ контейнеру звужуватись, щоб обрізати текст */
         }
 
-        .item-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-
-        .item-icon svg {
-            width: 24px;
-            height: 24px;
-            filter: brightness(0) invert(1);
-        }
-
+        .item-icon { flex-shrink: 0; }
+        .item-icon svg { width: 22px; height: 22px; filter: brightness(0) invert(1); }
+        
         .item-info {
             display: flex;
             flex-direction: column;
+            min-width: 0; /* Обов'язково для text-overflow */
         }
 
         .item-name {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #ffffff;
-            text-shadow: 0 0 3px #3b82f6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Робить "Восстановлен..." замість виїзду за екран */
         }
 
-        .item-level {
-            font-size: 0.7rem;
-            color: #aaccff;
-            margin-top: 0.1rem;
-        }
+        .item-level { font-size: 0.7rem; color: #aaccff; margin-top: 0.1rem; }
 
         .item-right {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
+            flex-shrink: 0; /* Забороняємо кнопці звужуватись */
         }
 
-        .item-value {
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #ffffff;
-            text-shadow: 0 0 6px #3b82f6;
-            white-space: nowrap;
-        }
+        .item-value { font-weight: 600; font-size: 0.85rem; color: #ffffff; white-space: nowrap; }
 
         .item-button {
             background: #3b82f6;
             color: white;
             font-weight: 600;
-            font-size: 0.8rem;
-            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            padding: 0.4rem 0.6rem; /* Трохи менші паддінги для вузьких екранів */
             border-radius: 1.5rem;
-            border: none;
-            box-shadow: 0 3px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
-            cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            min-width: 70px;
+            box-shadow: 0 3px 0 #1e3a8a;
+            cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
-        .item-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
-        }
+        .item-button:active { transform: translateY(2px); box-shadow: 0 1px 0 #1e3a8a; }
 
-        .task-reward {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #f5c45e;
-            text-shadow: 0 0 8px #f5c45e;
-        }
+        .task-reward { font-size: 0.8rem; font-weight: 600; color: #f5c45e; }
+        .task-special { background: linear-gradient(145deg, #2a4a8a, #1a3a6a); border: 1px solid #3b82f6; }
+        .notice { text-align: center; font-size: 0.7rem; color: #aaccff; margin-top: 1.5rem; border-top: 1px dashed rgba(59, 130, 246, 0.3); padding-top: 0.8rem; }
 
-        .task-special {
-            background: linear-gradient(145deg, #2a4a8a, #1a3a6a);
-            border: 1px solid #3b82f6;
-        }
-
-        .notice {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #aaccff;
-            margin-top: 1.5rem;
-            border-top: 1px dashed rgba(59, 130, 246, 0.3);
-            padding-top: 0.8rem;
-            text-shadow: 0 0 5px #3b82f6;
-        }
-
-        /* GPU OPTIMIZATION — SAFE, DOES NOT CHANGE DESIGN */
-        .game-container,
-        .big-coin,
-        .big-coin::before,
-        .trust-logo,
-        .letter-t,
-        .feature-card,
-        .energy-panel,
-        .top-bar,
-        .tasks-section,
-        .upgrade-section {
+        /* GPU OPTIMIZATION */
+        .game-container, .big-coin, .top-bar, .feature-card, .upgrade-item, .task-item {
             transform: translateZ(0);
-            will-change: transform, opacity;
             backface-visibility: hidden;
-            perspective: 1000px;
-        }
-
-        .big-coin::after {
-            will-change: opacity, transform, filter;
-            transform: translateZ(0);
         }
     </style>
 </head>
@@ -887,14 +632,12 @@
 
     <script>
         (function() {
-            // Ініціалізація Telegram WebApp
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.ready();
                 tg.expand();
                 tg.disableVerticalSwipes();
                 
-                // Хаки для правильного рендеру нижньої частини після розширення
                 requestAnimationFrame(() => {
                     window.scrollTo(0, 1);
                     setTimeout(() => window.scrollTo(0, 0), 50);
@@ -975,16 +718,17 @@
                 div.className = 'floating-value';
                 div.textContent = text;
                 div.style.color = color;
-                div.style.left = '50%';
-                div.style.transform = 'translateX(-50%)';
-                div.style.bottom = '0px';
+                
+                const randomOffset = (Math.random() - 0.5) * 40;
+                div.style.left = `calc(50% + ${randomOffset}px)`;
+                
                 container.appendChild(div);
                 setTimeout(() => div.remove(), 800);
             }
 
-            function handleTap() {
+            function handleTap(e) {
                 if (player.energy < ECONOMY.energy.tapCost) {
-                    showFloating('⚡ Нет энергии', '#ffa38b');
+                    showFloating('⚡ Нет', '#ffa38b');
                     return;
                 }
                 
@@ -992,66 +736,37 @@
                 player.energy -= ECONOMY.energy.tapCost;
                 player.balance = parseFloat((player.balance + tapValue).toFixed(6));
                 
-                showFloating(`+${tapValue.toFixed(6)}`, '#3b82f6');
+                showFloating(`+${tapValue.toFixed(4)}`, '#3b82f6');
                 
-                if (navigator.vibrate) navigator.vibrate(20);
+                if (navigator.vibrate) navigator.vibrate(10);
                 updateUI();
             }
 
             function purchaseUpgrade(type) {
                 const currentLevel = player[`${type}Level`];
-                if (currentLevel >= 10) { alert('❌ Достигнут максимальный уровень'); return; }
+                if (currentLevel >= 10) { alert('❌ Максимальный уровень'); return; }
                 
                 const price = ECONOMY.upgradePrices[type][currentLevel - 1];
                 if (player.balance < price) {
                     const needed = (price - player.balance).toFixed(2);
-                    alert(`❌ Недостаточно USDT. Нужно еще ${needed} USDT для улучшения`);
+                    alert(`❌ Нужно еще ${needed} USDT`);
                     return;
                 }
                 
-                if (confirm(`✅ Подтвердите покупку\nУровень ${currentLevel} → ${currentLevel + 1}\nСтоимость: ${price.toFixed(2)} USDT\nВаш баланс: ${player.balance.toFixed(2)} USDT`)) {
+                if (confirm(`✅ Улучшить за ${price.toFixed(2)} USDT?`)) {
                     player.balance = parseFloat((player.balance - price).toFixed(6));
                     player[`${type}Level`]++;
                     if (type === 'capacity') { player.energy = getCurrentCapacity(); }
-                    showFloating('✅ Улучшено', '#4ade80');
+                    showFloating('✅ UP', '#4ade80');
                     updateUI();
                 }
-            }
-
-            function handleTaskSubscribe() {
-                player.balance = parseFloat((player.balance + ECONOMY.tasks.subscription).toFixed(6));
-                showFloating(`+${ECONOMY.tasks.subscription.toFixed(2)}`, '#f5c45e');
-                updateUI();
-                alert('✅ Вы подписались на канал! +0.30 USDT');
-            }
-
-            function handleTaskAd() {
-                player.balance = parseFloat((player.balance + ECONOMY.tasks.adReward).toFixed(6));
-                showFloating(`+${ECONOMY.tasks.adReward.toFixed(2)}`, '#f5c45e');
-                updateUI();
-                alert('✅ Реклама просмотрена! +0.10 USDT');
-            }
-
-            function handleTaskFutures() {
-                player.balance = parseFloat((player.balance + ECONOMY.tasks.futuresReward).toFixed(6));
-                showFloating(`+20.00`, '#f5c45e');
-                updateUI();
-                alert('✅ Квест выполнен! +20.00 USDT');
-            }
-
-            function handleInviteFriend() {
-                player.referrals++;
-                player.energy = Math.min(getCurrentCapacity(), player.energy + ECONOMY.tasks.referralBonusEnergy);
-                showFloating(`+500 ⚡`, '#3b82f6');
-                updateUI();
-                alert('✅ Реферальный код скопирован! +500 энергии');
             }
 
             function createHandwrittenBg() {
                 const bgContainer = document.getElementById('handwrittenBg');
                 if (!bgContainer) return;
                 bgContainer.innerHTML = '';
-                for (let i = 0; i < 60; i++) {
+                for (let i = 0; i < 30; i++) { // Зменшено кількість фонових літер для швидкості
                     const span = document.createElement('span');
                     span.textContent = 'T';
                     span.style.left = Math.random() * 100 + '%';
@@ -1059,7 +774,7 @@
                     span.style.setProperty('--r', (Math.random() * 60) - 30);
                     span.style.setProperty('--d', Math.random() * 5);
                     span.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-                    span.style.opacity = 0.2 + Math.random() * 0.3;
+                    span.style.opacity = 0.2 + Math.random() * 0.2;
                     bgContainer.appendChild(span);
                 }
             }
@@ -1077,22 +792,12 @@
                     });
                 });
                 
-                document.querySelectorAll('.task-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const task = e.target.dataset.task;
-                        switch(task) {
-                            case 'subscribe': handleTaskSubscribe(); break;
-                            case 'ad': handleTaskAd(); break;
-                            case 'futures': handleTaskFutures(); break;
-                            case 'blum': alert('❌ Квест в разработке'); break;
-                        }
-                    });
+                document.getElementById('topRefBar').addEventListener('click', () => {
+                    player.referrals++;
+                    player.energy = Math.min(getCurrentCapacity(), player.energy + ECONOMY.tasks.referralBonusEnergy);
+                    showFloating(`+500 ⚡`, '#3b82f6');
+                    updateUI();
                 });
-                
-                document.getElementById('topRefBar').addEventListener('click', handleInviteFriend);
-                document.getElementById('rankCard').addEventListener('click', () => { alert('🏆 Ваш ранг: бронза'); });
-                document.getElementById('referralsCard').addEventListener('click', () => { alert('👥 Ваши рефералы: ' + player.referrals); });
                 
                 setInterval(() => {
                     const maxEnergy = getCurrentCapacity();
@@ -1103,7 +808,6 @@
                 }, 1000);
                 
                 updateUI();
-                console.log('✅ Trust Wallet з економікою USDT та оптимізацією FPS');
             }
 
             init();
