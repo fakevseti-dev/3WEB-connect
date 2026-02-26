@@ -35,7 +35,8 @@
             width: 100%;
             background: linear-gradient(145deg, #0f1a2f, #030a18);
             border-radius: 0; 
-            padding: calc(5rem + env(safe-area-inset-top, 40px)) 1rem 3rem 1rem; 
+            /* ФІКС: Підняли все максимально вгору (зменшили верхній відступ до мінімуму, але залишили сейф-зону для "чубчика") */
+            padding: calc(1.5rem + env(safe-area-inset-top, 20px)) 1rem 3rem 1rem; 
             min-height: 100dvh;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e3a5f inset;
             color: #ffffff;
@@ -45,7 +46,7 @@
 
         @media (min-width: 480px) {
             body { padding: 1rem; align-items: center; }
-            .game-container { border-radius: 3rem 3rem 2rem 2rem; min-height: 90vh; padding: 3rem 1.5rem 2rem 1.5rem; }
+            .game-container { border-radius: 3rem 3rem 2rem 2rem; min-height: 90vh; padding: 2rem 1.5rem 2rem 1.5rem; }
         }
 
         /* --- ФОНОВІ ЛІТЕРИ Т --- */
@@ -55,30 +56,29 @@
             font-family: 'Caveat', cursive; transform: rotate(calc(var(--r) * 1deg)); 
             animation: floatT 8s infinite alternate; animation-delay: calc(var(--d) * -1s); 
             text-shadow: 0 0 5px #3b82f6; opacity: 0.6; pointer-events: none;
-            will-change: transform, opacity; /* Захист від лагів при великій кількості літер */
+            will-change: transform, opacity;
         }
         @keyframes floatT { 0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; } 50% { transform: translateY(-15px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.8; } 100% { transform: translateY(15px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; } }
 
         .game-container::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 90%); pointer-events: none; z-index: 0; }
 
-        /* --- ПЛАШКИ ТА МЕНЮ (Зроблено трохи прозорішими, щоб літери Т просвічувались) --- */
+        /* --- ПЛАШКИ ТА МЕНЮ (напівпрозорі, щоб фон просвічувався) --- */
         .top-bar, .energy-panel, .top-ref-bar, .feature-card, .tasks-section, .upgrade-section {
-            background: rgba(20, 40, 70, 0.85); /* Було 0.95 */
+            background: rgba(20, 40, 70, 0.85); 
             border: 1px solid rgba(59, 130, 246, 0.4);
             position: relative;
             z-index: 2;
         }
 
-        /* --- USDT ПАНЕЛЬ (Ширша і трохи опущена) --- */
+        /* --- USDT ПАНЕЛЬ (Повернули розмір і посунули вгору) --- */
         .top-bar { 
             display: flex; justify-content: center; align-items: center; 
-            padding: 0.7rem 1rem; 
+            padding: 0.8rem 1.2rem; 
             border-radius: 2.5rem; 
-            margin-top: 0.5rem; /* Опустили на кілька міліметрів */
-            margin-bottom: 1.2rem; 
+            margin-bottom: 1.5rem; 
             box-shadow: 0 5px 0 #0a1a2f, 0 8px 15px rgba(0, 0, 0, 0.4); 
-            width: 85%; /* Зробили ширшою, як на скріні */
-            max-width: 340px; 
+            /* Повернуто старі акуратні розміри */
+            width: max-content; min-width: 60%; 
             margin-left: auto; margin-right: auto; 
         }
         
@@ -98,7 +98,8 @@
 
         .tap-value { color: #aaccff; font-size: 0.7rem; text-align: center; margin: 0.2rem 0 0.5rem; }
         
-        .tap-zone { display: flex; justify-content: center; margin: 3rem 0 3rem; cursor: pointer; position: relative; z-index: 5; touch-action: none; }
+        /* Щоб кнопка залишилась низько і зручно, я додав їй великий відступ зверху (4rem) */
+        .tap-zone { display: flex; justify-content: center; margin: 4rem 0 3rem; cursor: pointer; position: relative; z-index: 5; touch-action: none; }
 
         .big-coin { 
             width: 250px; 
@@ -530,7 +531,6 @@
                 const bgContainer = document.getElementById('handwrittenBg');
                 if (!bgContainer) return;
                 bgContainer.innerHTML = '';
-                // Збільшено кількість літер до 120 для ідеального заповнення
                 for (let i = 0; i < 120; i++) {
                     const span = document.createElement('span');
                     span.textContent = 'T';
