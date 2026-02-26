@@ -35,7 +35,6 @@
             width: 100%;
             background: linear-gradient(145deg, #0f1a2f, #030a18);
             border-radius: 0; 
-            /* ФІКС 3: Збільшили відступ зверху ще на кілька міліметрів (було 4.5rem, стало 5rem) */
             padding: calc(5rem + env(safe-area-inset-top, 40px)) 1rem 3rem 1rem; 
             min-height: 100dvh;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e3a5f inset;
@@ -49,20 +48,40 @@
             .game-container { border-radius: 3rem 3rem 2rem 2rem; min-height: 90vh; padding: 3rem 1.5rem 2rem 1.5rem; }
         }
 
-        .handwritten-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.25; }
-        .handwritten-bg span { position: absolute; font-size: 1.2rem; font-weight: 300; color: #3b82f6; font-family: 'Caveat', cursive; transform: rotate(calc(var(--r) * 1deg)); animation: floatT 8s infinite alternate; animation-delay: calc(var(--d) * -1s); text-shadow: 0 0 5px #3b82f6; opacity: 0.6; pointer-events: none; }
-        @keyframes floatT { 0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; } 50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.8; } 100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; } }
+        /* --- ФОНОВІ ЛІТЕРИ Т --- */
+        .handwritten-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
+        .handwritten-bg span { 
+            position: absolute; font-size: 1.2rem; font-weight: 300; color: #3b82f6; 
+            font-family: 'Caveat', cursive; transform: rotate(calc(var(--r) * 1deg)); 
+            animation: floatT 8s infinite alternate; animation-delay: calc(var(--d) * -1s); 
+            text-shadow: 0 0 5px #3b82f6; opacity: 0.6; pointer-events: none;
+            will-change: transform, opacity; /* Захист від лагів при великій кількості літер */
+        }
+        @keyframes floatT { 0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; } 50% { transform: translateY(-15px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.8; } 100% { transform: translateY(15px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; } }
 
         .game-container::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 90%); pointer-events: none; z-index: 0; }
 
+        /* --- ПЛАШКИ ТА МЕНЮ (Зроблено трохи прозорішими, щоб літери Т просвічувались) --- */
         .top-bar, .energy-panel, .top-ref-bar, .feature-card, .tasks-section, .upgrade-section {
-            background: rgba(20, 40, 70, 0.95);
-            border: 1px solid rgba(59, 130, 246, 0.5);
+            background: rgba(20, 40, 70, 0.85); /* Було 0.95 */
+            border: 1px solid rgba(59, 130, 246, 0.4);
             position: relative;
             z-index: 2;
         }
 
-        .top-bar { display: flex; justify-content: center; align-items: center; padding: 0.8rem 1.2rem; border-radius: 2.5rem; margin-bottom: 1.2rem; box-shadow: 0 5px 0 #0a1a2f, 0 8px 15px rgba(0, 0, 0, 0.4); width: max-content; min-width: 60%; margin-left: auto; margin-right: auto; }
+        /* --- USDT ПАНЕЛЬ (Ширша і трохи опущена) --- */
+        .top-bar { 
+            display: flex; justify-content: center; align-items: center; 
+            padding: 0.7rem 1rem; 
+            border-radius: 2.5rem; 
+            margin-top: 0.5rem; /* Опустили на кілька міліметрів */
+            margin-bottom: 1.2rem; 
+            box-shadow: 0 5px 0 #0a1a2f, 0 8px 15px rgba(0, 0, 0, 0.4); 
+            width: 85%; /* Зробили ширшою, як на скріні */
+            max-width: 340px; 
+            margin-left: auto; margin-right: auto; 
+        }
+        
         .balance-box { display: flex; align-items: center; gap: 0.5rem; }
         .usdt-icon { display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; background: linear-gradient(145deg, #26a17b, #1a7d5c); border-radius: 50%; font-weight: 700; font-size: 0.75rem; color: white; box-shadow: 0 0 10px #26a17b; border: 1px solid rgba(255, 255, 255, 0.3); }
         .usdt-text { font-size: 1rem; font-weight: 600; color: #ffffff; text-shadow: 0 0 8px #3b82f6; }
@@ -79,16 +98,14 @@
 
         .tap-value { color: #aaccff; font-size: 0.7rem; text-align: center; margin: 0.2rem 0 0.5rem; }
         
-        /* ФІКС 1: Відсуваємо кнопку тапання значно нижче від верхньої панелі */
         .tap-zone { display: flex; justify-content: center; margin: 3rem 0 3rem; cursor: pointer; position: relative; z-index: 5; touch-action: none; }
 
-        /* ФІКС 2: Збільшено розмір кнопки та літери */
         .big-coin { 
-            width: 250px; /* Було 200px */
-            height: 250px; /* Було 200px */
+            width: 250px; 
+            height: 250px; 
             background: radial-gradient(circle at 30% 30%, #2b6ed7, #0a2a6a, #031030); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; 
-            transition: transform 0.05s ease-out; /* Швидша реакція на тап */
+            transition: transform 0.05s ease-out; 
             border: 2px solid rgba(255, 255, 255, 0.4); 
             box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 40px rgba(59, 130, 246, 0.5); 
             animation: modernFloat 5s infinite ease-in-out; 
@@ -99,19 +116,17 @@
         .big-coin::before { content: ''; position: absolute; inset: 10px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 80%); border: 1px solid rgba(255, 255, 255, 0.4); z-index: 1; pointer-events: none; }
         @keyframes modernFloat { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
         
-        /* Клас, який додається через JavaScript для ідеального мультитачу */
         .big-coin.pressed { 
             transform: scale(0.92) !important; 
             box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.8) inset, 0 0 70px #3b82f6, 0 0 120px rgba(59, 130, 246, 0.9) !important;
         }
 
         .trust-logo { position: relative; z-index: 10; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .letter-t { font-size: 8.5rem; /* Було 7rem */ font-weight: 900; color: #ffffff; text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px #3b82f6; line-height: 1; animation: letterSuperPulse 2.5s infinite alternate; letter-spacing: -5px; }
+        .letter-t { font-size: 8.5rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px #3b82f6; line-height: 1; animation: letterSuperPulse 2.5s infinite alternate; letter-spacing: -5px; }
         @keyframes letterSuperPulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
 
-        /* Мультитач вилітаючі цифри */
         .floating-value { 
-            position: fixed; /* Fixed дозволяє спавнити цифри точно під пальцем */
+            position: fixed; 
             font-weight: 800; 
             font-size: 1.6rem; 
             color: #ffffff; 
@@ -150,7 +165,7 @@
         .section-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-left: 0.3rem; }
         .section-title { font-size: 1rem; font-weight: 700; color: #ffffff; text-shadow: 0 0 10px #3b82f6; }
 
-        .upgrade-item, .task-item { background: rgba(10, 20, 35, 0.95); border-radius: 0.9rem; padding: 0.6rem; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 2px 0 #0a1a2f; cursor: pointer; }
+        .upgrade-item, .task-item { background: rgba(10, 20, 35, 0.85); border-radius: 0.9rem; padding: 0.6rem; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 2px 0 #0a1a2f; cursor: pointer; }
         .upgrade-item:active, .task-item:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
 
         .item-left { display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0; }
@@ -462,14 +477,12 @@
                 document.getElementById('recoveryLevel').textContent = `ур. ${player.recoveryLevel}`;
             }
 
-            // ФІКС: Функція показу цифр ТАМ, ДЕ ТАПНУВ ПАЛЕЦЬ
             function showFloating(text, color, x, y) {
                 const div = document.createElement('div');
                 div.className = 'floating-value';
                 div.textContent = text;
                 div.style.color = color;
                 
-                // Легкий розкид навколо пальця, щоб цифри не злипались, якщо тапаєш в одну точку
                 const randomOffsetX = (Math.random() - 0.5) * 40; 
                 const randomOffsetY = (Math.random() - 0.5) * 40; 
                 
@@ -480,7 +493,6 @@
                 setTimeout(() => { if (div.parentNode) div.remove(); }, 800);
             }
 
-            // Обробка одиничного тапа
             function processTap(clientX, clientY) {
                 vibrate(); 
                 
@@ -509,7 +521,6 @@
                     player.balance = parseFloat((player.balance - price).toFixed(6));
                     player[`${type}Level`]++;
                     if (type === 'capacity') { player.energy = getCurrentCapacity(); }
-                    // Показуємо по центру екрану
                     showFloating('✅ UP', '#4ade80', window.innerWidth / 2, window.innerHeight / 2);
                     updateUI();
                 }
@@ -519,15 +530,16 @@
                 const bgContainer = document.getElementById('handwrittenBg');
                 if (!bgContainer) return;
                 bgContainer.innerHTML = '';
-                for (let i = 0; i < 75; i++) {
+                // Збільшено кількість літер до 120 для ідеального заповнення
+                for (let i = 0; i < 120; i++) {
                     const span = document.createElement('span');
                     span.textContent = 'T';
                     span.style.left = Math.random() * 100 + '%';
                     span.style.top = Math.random() * 100 + '%';
                     span.style.setProperty('--r', (Math.random() * 60) - 30);
-                    span.style.setProperty('--d', Math.random() * 5);
-                    span.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-                    span.style.opacity = 0.3 + Math.random() * 0.3;
+                    span.style.setProperty('--d', Math.random() * 8);
+                    span.style.fontSize = (0.8 + Math.random() * 1.5) + 'rem';
+                    span.style.opacity = 0.25 + Math.random() * 0.35;
                     bgContainer.appendChild(span);
                 }
             }
@@ -536,14 +548,12 @@
                 createHandwrittenBg();
                 player.energy = getCurrentCapacity();
                 
-                // ІДЕАЛЬНИЙ МУЛЬТИТАЧ ДЛЯ ТАПАЛКИ
                 const tapZone = document.getElementById('tapButton');
                 const bigCoin = document.querySelector('.big-coin');
 
-                // Для мобільних пристроїв (підтримка багатьох пальців)
                 tapZone.addEventListener('touchstart', (e) => {
-                    e.preventDefault(); // Блокує прокрутку екрану і "зум" при тапі
-                    bigCoin.classList.add('pressed'); // Анімація натискання
+                    e.preventDefault(); 
+                    bigCoin.classList.add('pressed'); 
                     
                     for (let i = 0; i < e.changedTouches.length; i++) {
                         const touch = e.changedTouches[i];
@@ -554,11 +564,10 @@
                 tapZone.addEventListener('touchend', (e) => {
                     e.preventDefault();
                     if (e.touches.length === 0) {
-                        bigCoin.classList.remove('pressed'); // Відпускання
+                        bigCoin.classList.remove('pressed'); 
                     }
                 });
 
-                // Для комп'ютера (мишка)
                 tapZone.addEventListener('mousedown', (e) => {
                     bigCoin.classList.add('pressed');
                     processTap(e.clientX, e.clientY);
