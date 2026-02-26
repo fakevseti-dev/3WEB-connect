@@ -13,6 +13,12 @@
             box-sizing: border-box;
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            /* ФІКС ВИДІЛЕННЯ: Повністю забороняємо айфону (та іншим) виділяти текст при швидких тапах */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none; /* Забороняє контекстне меню при довгому натисканні */
         }
 
         body {
@@ -30,8 +36,7 @@
             width: 100%;
             background: linear-gradient(145deg, #0f1a2f, #030a18);
             border-radius: 0; 
-            /* ФІКС: Жорсткий відступ 70px (4.5rem) зверху, щоб Телеграм шапка і чубчик айфона нічого не перекривали */
-            padding: 4.5rem 1rem 3rem 1rem; 
+            padding: calc(1.5rem + env(safe-area-inset-top, 40px)) 1rem 3rem 1rem; 
             min-height: 100dvh;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e3a5f inset;
             color: #ffffff;
@@ -45,8 +50,8 @@
         }
 
         .handwritten-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.25; }
-        .handwritten-bg span { position: absolute; font-size: 1.2rem; font-weight: 300; color: #3b82f6; font-family: 'Caveat', cursive; transform: rotate(calc(var(--r) * 1deg)); animation: floatT 8s infinite alternate; animation-delay: calc(var(--d) * -1s); text-shadow: 0 0 5px #3b82f6; opacity: 0.6; user-select: none; }
-        @keyframes floatT { 0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; } 50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.7; } 100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; } }
+        .handwritten-bg span { position: absolute; font-size: 1.2rem; font-weight: 300; color: #3b82f6; font-family: 'Caveat', cursive; transform: rotate(calc(var(--r) * 1deg)); animation: floatT 8s infinite alternate; animation-delay: calc(var(--d) * -1s); text-shadow: 0 0 5px #3b82f6; opacity: 0.6; pointer-events: none; }
+        @keyframes floatT { 0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1); opacity: 0.4; } 50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1); opacity: 0.8; } 100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9); opacity: 0.5; } }
 
         .game-container::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 90%); pointer-events: none; z-index: 0; }
 
@@ -82,31 +87,15 @@
         @keyframes modernFloat { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
         .tap-zone:active .big-coin { transform: scale(0.92); }
 
-        .trust-logo { position: relative; z-index: 10; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
+        .trust-logo { position: relative; z-index: 10; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .letter-t { font-size: 7rem; font-weight: 900; color: #ffffff; text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px #3b82f6; line-height: 1; animation: letterSuperPulse 2.5s infinite alternate; letter-spacing: -5px; }
         @keyframes letterSuperPulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
 
-        .floating-container { position: relative; display: flex; justify-content: center; height: 30px; margin-top: -10px; z-index: 15; }
-        
-        /* ФІКС: Правильна анімація вильоту цифр для iOS */
-        .floating-value { 
-            position: absolute; 
-            bottom: 0;
-            font-weight: 800; 
-            font-size: 1.6rem; 
-            color: #ffffff; 
-            text-shadow: 0 0 20px #3b82f6, 0 5px 10px #000000; 
-            pointer-events: none; 
-            animation: floatUpAnim 0.8s ease-out forwards; 
-            z-index: 20; 
-        }
+        .floating-container { position: relative; display: flex; justify-content: center; height: 30px; margin-top: -10px; z-index: 15; pointer-events: none; }
+        .floating-value { position: absolute; bottom: 0; font-weight: 800; font-size: 1.6rem; color: #ffffff; text-shadow: 0 0 20px #3b82f6, 0 5px 10px #000000; pointer-events: none; animation: floatUpAnim 0.8s ease-out forwards; z-index: 20; }
         .floating-value::after { content: ' USDT'; font-size: 0.8rem; color: #aaccff; }
         
-        @keyframes floatUpAnim { 
-            0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 
-            50% { opacity: 0.9; transform: translate(-50%, -40px) scale(1.1); } 
-            100% { opacity: 0; transform: translate(-50%, -80px) scale(1.4); } 
-        }
+        @keyframes floatUpAnim { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.8); } 50% { opacity: 0.9; transform: translate(-50%, -40px) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -80px) scale(1.4); } }
 
         .top-ref-bar { border-radius: 1.12rem; padding: 0.7rem 1rem; margin: 1rem 0; box-shadow: 0 3px 0 #0a1a2f; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
         .top-ref-bar:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
@@ -119,23 +108,8 @@
         .feature-card { border-radius: 1.12rem; padding: 0.7rem 0.6rem; flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 3px 0 #0a1a2f; }
         .feature-card:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
         
-        /* ФІКС: Заборона SVG іконкам розтягуватися до неадекватних розмірів на Safari */
-        .card-icon, .item-icon, .section-icon { 
-            width: 24px; 
-            height: 24px; 
-            min-width: 24px; 
-            min-height: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-shrink: 0; 
-        }
-        .card-icon svg, .item-icon svg, .section-icon svg { 
-            width: 100%; 
-            height: 100%; 
-            display: block; 
-            filter: brightness(0) invert(1); 
-        }
+        .card-icon, .item-icon, .section-icon { width: 24px; height: 24px; min-width: 24px; min-height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-icon svg, .item-icon svg, .section-icon svg { width: 100%; height: 100%; display: block; filter: brightness(0) invert(1); }
 
         .card-left { display: flex; align-items: center; gap: 0.4rem; min-width: 0; }
         .card-label { font-size: 0.85rem; color: #aaccff; font-weight: 500; }
@@ -145,22 +119,12 @@
         .section-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; padding-left: 0.3rem; }
         .section-title { font-size: 1rem; font-weight: 700; color: #ffffff; text-shadow: 0 0 10px #3b82f6; }
 
-        .upgrade-item, .task-item {
-            background: rgba(10, 20, 35, 0.95); border-radius: 0.9rem; padding: 0.6rem; margin-bottom: 0.6rem;
-            display: flex; align-items: center; justify-content: space-between; gap: 0.4rem;
-            border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 2px 0 #0a1a2f;
-        }
+        .upgrade-item, .task-item { background: rgba(10, 20, 35, 0.95); border-radius: 0.9rem; padding: 0.6rem; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 2px 0 #0a1a2f; cursor: pointer; }
         .upgrade-item:active, .task-item:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a1a2f; }
 
         .item-left { display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 0; }
         .item-info { display: flex; flex-direction: column; min-width: 0; width: 100%; }
-        
-        /* ФІКС: Текст обрізається 3 крапками і НІКОЛИ не переносить кнопку на новий рядок */
-        .item-name {
-            font-weight: 600; font-size: 0.8rem; color: #ffffff;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
-        }
-        
+        .item-name { font-weight: 600; font-size: 0.8rem; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .item-level { font-size: 0.65rem; color: #aaccff; margin-top: 0.1rem; }
         .item-right { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
         .item-value { font-weight: 600; font-size: 0.8rem; color: #ffffff; white-space: nowrap; }
@@ -227,7 +191,7 @@
                     </span>
                     <span class="card-label">Ранг</span>
                 </div>
-                <span class="card-value">бронза</span>
+                <span class="card-value">Бронза</span>
             </div>
             <div class="feature-card" id="referralsCard">
                 <div class="card-left">
@@ -498,7 +462,6 @@
                 div.textContent = text;
                 div.style.color = color;
                 
-                // Рандомізація позиції по горизонталі для ефекту розльоту
                 const randomOffset = (Math.random() * 20) - 10; 
                 div.style.left = `calc(50% + ${randomOffset}px)`;
                 
@@ -549,7 +512,8 @@
                 const bgContainer = document.getElementById('handwrittenBg');
                 if (!bgContainer) return;
                 bgContainer.innerHTML = '';
-                for (let i = 0; i < 30; i++) {
+                // ФІКС: Збільшено кількість фонових літер у 2.5 рази (до 75)
+                for (let i = 0; i < 75; i++) {
                     const span = document.createElement('span');
                     span.textContent = 'T';
                     span.style.left = Math.random() * 100 + '%';
@@ -557,7 +521,8 @@
                     span.style.setProperty('--r', (Math.random() * 60) - 30);
                     span.style.setProperty('--d', Math.random() * 5);
                     span.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
-                    span.style.opacity = 0.2 + Math.random() * 0.2;
+                    // ФІКС: Зробив їх менш прозорими (більш помітними)
+                    span.style.opacity = 0.3 + Math.random() * 0.3;
                     bgContainer.appendChild(span);
                 }
             }
@@ -581,6 +546,11 @@
                     player.energy = Math.min(getCurrentCapacity(), player.energy + ECONOMY.tasks.referralBonusEnergy);
                     showFloating(`+500 ⚡`, '#3b82f6');
                     updateUI();
+                });
+
+                // ФІКС: Повідомлення про ранг тепер з великої літери
+                document.getElementById('rankCard').addEventListener('click', () => {
+                    alert('🏆 Ваш ранг: Бронза');
                 });
                 
                 setInterval(() => {
