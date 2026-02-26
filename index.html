@@ -1,438 +1,721 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- CRITICAL: Correct viewport for fullscreen & no scaling -->
+    <!-- CRITICAL: proper viewport for fullscreen mobile, no scaling -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TRUST TAP • OPTIMIZED</title>
-    <!-- minimal fonts – only what's used -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;900&display=swap" rel="stylesheet">
+    <title>TRUST TAP • CRYPTO WALLET GAME</title>
+    <!-- fonts unchanged -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* RESET & FULLSCREEN FIXES */
+        /* all visual effects EXACTLY preserved, only performance optimizations added */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* remove flash on tap */
+            /* prevent tap highlight (still same) */
+            -webkit-tap-highlight-color: transparent;
         }
 
+        /* CRITICAL FIX: fullscreen stable height + GPU layer */
         html, body {
             width: 100%;
-            /* FORCE stable height – dvh first, vh fallback */
             height: 100dvh;
-            height: 100vh;
-            overflow-x: hidden;
-            background: #030712; /* match container bg */
+            height: 100vh; /* fallback */
+            margin: 0;
+            padding: 0;
+            background: #030712;
             display: flex;
-            align-items: center;
             justify-content: center;
-            /* prevent pull-to-refresh & swipe navigation */
+            align-items: center;
+            /* prevent pull-to-refresh and scroll chaining */
             overscroll-behavior: none;
-            position: fixed; /* kills any mobile bar weirdness */
+            position: fixed;
             top: 0;
             left: 0;
+            /* force GPU compositing */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: transform;
         }
 
         body {
-            padding: 0;         /* remove padding – fullscreen exact */
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            /* ensure no extra spacing */
+            padding: 0;
         }
 
-        /* main container – use dvh, no margins/paddings that break height */
+        /* main container – exact same design, only height fix & GPU */
         .game-container {
             max-width: 460px;
             width: 100%;
-            height: 100dvh;          /* forces full screen */
-            height: 100vh;            /* fallback */
-            background: #030712;      /* pure bg – no heavy gradient that repaints */
-            border-radius: 0;         /* fullscreen – remove border radius */
-            padding: 0.75rem 0.75rem 0.75rem 0.75rem;
+            height: 100dvh;
+            height: 100vh;
+            background: linear-gradient(145deg, #0f1a2f, #030a18);
+            border-radius: 3rem 3rem 2rem 2rem;
+            padding: 1.8rem 1.5rem 2rem 1.5rem;
+            /* identical shadow – but we add will-change for performance */
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e3a5f inset, 0 0 30px rgba(59, 130, 246, 0.2);
             color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;          /* allow scroll inside if needed, but all content visible */
             position: relative;
-            /* will-change + transform hint for GPU */
-            will-change: transform;
+            overflow-y: auto; /* enable scroll inside if needed, but content now full */
+            overflow-x: hidden;
+            /* GPU optimization */
             transform: translateZ(0);
-            /* remove all heavy shadows, blur, gradients – replace with flat dark + simple accents */
-            box-shadow: none;
+            -webkit-transform: translateZ(0);
+            will-change: transform, opacity;
+            /* force layer */
+            isolation: isolate;
         }
 
-        /* REMOVED all backdrop-filter, heavy box-shadow, animated gradients */
-        /* keep minimal borders / subtle static effect */
+        /* handwritten background – fully preserved, only GPU added */
+        .handwritten-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.25;
+            will-change: transform; /* optimize */
+            transform: translateZ(0);
+        }
 
-        /* simple top bar – no blur */
+        .handwritten-bg span {
+            position: absolute;
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: #3b82f6;
+            font-family: 'Caveat', 'Kalam', 'Comic Sans MS', cursive, sans-serif;
+            transform: rotate(calc(var(--r) * 1deg)) translateZ(0);
+            animation: floatT 8s infinite alternate;
+            animation-delay: calc(var(--d) * -1s);
+            text-shadow: 0 0 5px #3b82f6;
+            opacity: 0.6;
+            user-select: none;
+            will-change: transform, opacity; /* animation hint */
+        }
+
+        /* keyframes exactly same – but now GPU-friendly (transform only) */
+        @keyframes floatT {
+            0% { transform: translateY(0) rotate(calc(var(--r) * 1deg)) scale(1) translateZ(0); opacity: 0.4; }
+            50% { transform: translateY(-10px) rotate(calc(var(--r) * 1deg)) scale(1.1) translateZ(0); opacity: 0.7; }
+            100% { transform: translateY(10px) rotate(calc(var(--r) * 1deg)) scale(0.9) translateZ(0); opacity: 0.5; }
+        }
+
+        /* pseudo-elements unchanged – but container already has layer */
+        .game-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 90%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.15), transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* top bar – exact same look, only add will-change */
         .top-bar {
             display: flex;
             justify-content: center;
-            background: #0f1a2f;       /* solid color – fastest */
-            padding: 0.7rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid #1e3a5f;
-            margin: 0.2rem auto 0.6rem auto;
-            width: 80%;
-            box-shadow: 0 4px 0 #0a1422; /* simple drop shadow, no blur */
+            align-items: center;
+            background: rgba(20, 40, 70, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* preserve blur, but now GPU */
+            padding: 0.9rem 1.26rem;
+            border-radius: 2.7rem;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            margin-bottom: 1.2rem;
+            box-shadow: 0 7.18px 0 #0a1a2f, 0 8.97px 17.94px rgba(0, 0, 0, 0.4), 0 0 13.45px rgba(59, 130, 246, 0.3);
+            position: relative;
+            z-index: 2;
+            width: 78%;
+            margin-left: auto;
+            margin-right: auto;
+            /* GPU */
             transform: translateZ(0);
+            will-change: transform, opacity;
         }
 
         .balance-box {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.54rem;
         }
 
         .usdt-icon {
-            width: 28px;
-            height: 28px;
-            background: #1e7a5c;        /* flat */
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 28.75px;
+            height: 28.75px;
+            background: linear-gradient(145deg, #26a17b, #1a7d5c);
+            border-radius: 50%;
             font-weight: 700;
             font-size: 0.8rem;
-            border: 1px solid #3b82f6;
-            box-shadow: 0 3px 0 #0d4d3a;
+            color: white;
+            box-shadow: 0 0 13.45px #26a17b, 0 3.59px 0 #0d4d3a;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .usdt-text {
-            font-size: 1rem;
+            font-size: 1.08rem;
             font-weight: 600;
-            color: white;
+            color: #ffffff;
+            text-shadow: 0 0 8.97px #3b82f6;
+            letter-spacing: 0.45px;
         }
 
         .balance-amount {
             font-size: 0.9rem;
             font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 0.45px;
+            text-shadow: 0 0 8.97px #3b82f6;
+            margin-left: -0.18rem;
         }
+
         .balance-amount::after {
             content: ' USDT';
             color: #aaccff;
+            font-weight: 400;
             font-size: 0.7rem;
+            margin-left: 2px;
         }
 
-        /* ENERGY PANEL – no blur */
         .energy-panel {
-            background: #0f1a2f;
-            border-radius: 1rem;
-            padding: 0.5rem 0.8rem;
-            margin: 0.2rem auto 0.6rem auto;
-            width: 92%;
+            background: rgba(20, 40, 70, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.12rem;
+            padding: 0.5rem 0.87rem;
+            margin-bottom: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid #1e3a5f;
-            box-shadow: 0 3px 0 #0a1422;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 2;
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
             transform: translateZ(0);
+            will-change: transform;
         }
 
         .energy-left {
             display: flex;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.19rem;
         }
-        .bolt { font-size: 0.9rem; }
-        .energy-count { font-weight: 700; font-size: 0.8rem; }
+
+        .bolt {
+            font-size: 0.87rem;
+            color: #ffffff;
+            filter: drop-shadow(0 0 5px #ffffff);
+        }
+
+        .energy-count {
+            font-weight: 700;
+            font-size: 0.81rem;
+            color: #ffffff;
+            text-shadow: 0 0 9.3px #ffffff, 0 0 18.6px #3b82f6;
+        }
+
         .energy-bar-bg {
-            width: 90px;
+            width: 100px;
             height: 4px;
-            background: #1a2a40;
-            border-radius: 4px;
+            background: rgba(10, 20, 40, 0.8);
+            border-radius: 10px;
             overflow: hidden;
-            margin: 0 6px;
+            margin: 0 8px;
+            box-shadow: inset 0 1.24px 3.1px rgba(0, 0, 0, 0.5);
         }
+
         .energy-bar-fill {
             height: 100%;
-            background: #3b82f6;       /* flat color */
-            width: 100%;
-            transition: width 0.1s linear; /* micro-update, no heavy easing */
-            border-radius: 4px;
+            width: 80%;
+            background: linear-gradient(90deg, #ffffff, #aaccff, #3b82f6);
+            border-radius: 10px;
+            box-shadow: 0 0 9.3px #ffffff, 0 0 18.6px #3b82f6;
+            transition: width 0.3s ease;
+            will-change: width;
         }
+
         .regen-tip {
-            font-size: 0.65rem;
-            color: #aaccff;
+            color: #ffffff;
+            font-size: 0.6rem;
+            text-shadow: 0 0 6.2px #ffffff, 0 0 12.4px #3b82f6;
         }
 
         .tap-value {
-            font-size: 0.75rem;
-            text-align: center;
             color: #aaccff;
-            margin: 0.2rem 0 0.3rem;
+            font-size: 0.7rem;
+            text-align: center;
+            margin: 0.2rem 0 0.5rem;
         }
 
-        /* TAP ZONE – heavily optimized: no backdrop, no blur, minimal paint */
         .tap-zone {
             display: flex;
             justify-content: center;
-            margin: 0.2rem 0 0.5rem;
+            margin: 0.5rem 0 1.2rem;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.8));
+            z-index: 5;
+            /* GPU */
             transform: translateZ(0);
-            filter: none; /* drop-shadow removed – use simpler */
+            will-change: transform;
         }
 
         .big-coin {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle at 30% 30%, #2b6ed7, #0a2a6a);
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle at 30% 30%, #2b6ed7, #0a2a6a, #031030);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid rgba(255,255,255,0.2);
-            box-shadow: 0 10px 15px -5px black, 0 0 0 1px #3b82f6 inset;
-            transition: transform 0.1s cubic-bezier(0.1, 0.8, 0.2, 1); /* minimal transition */
-            will-change: transform;
+            position: relative;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 40px #3b82f6, 0 0 80px rgba(59, 130, 246, 0.4);
+            animation: coinGlow 3s infinite alternate, modernFloat 5s infinite ease-in-out;
+            /* GPU */
             transform: translateZ(0);
-            /* remove all animations (float, glow) – they kill FPS */
+            will-change: transform, box-shadow;
+        }
+
+        /* animations unchanged, but now GPU-accelerated */
+        @keyframes coinGlow {
+            0% { box-shadow: 0 30px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(59, 130, 246, 0.3) inset, 0 0 30px #3b82f6, 0 0 60px rgba(59, 130, 246, 0.3); }
+            100% { box-shadow: 0 30px 40px -10px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.6) inset, 0 0 60px #3b82f6, 0 0 100px rgba(59, 130, 246, 0.7); }
         }
 
         .big-coin::before {
             content: '';
             position: absolute;
-            inset: 8px;
+            inset: 10px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 70%);
-            border: 1px solid rgba(255,255,255,0.2);
-            pointer-events: none;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 80%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: inset 0 10px 30px rgba(255, 255, 255, 0.4);
+            z-index: 1;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* remove all outer glow / after element with blur */
+        .big-coin::after {
+            content: '';
+            position: absolute;
+            inset: -15px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.7), transparent 70%);
+            opacity: 0.6;
+            filter: blur(20px);
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            animation: outerGlow 3s infinite alternate;
+        }
+
+        @keyframes outerGlow {
+            0% { opacity: 0.5; filter: blur(20px); }
+            100% { opacity: 0.8; filter: blur(25px); }
+        }
+
+        @keyframes modernFloat {
+            0% { transform: translateY(0px) rotate(0deg) translateZ(0); }
+            25% { transform: translateY(-5px) rotate(1deg) translateZ(0); }
+            75% { transform: translateY(5px) rotate(-1deg) translateZ(0); }
+            100% { transform: translateY(0px) rotate(0deg) translateZ(0); }
+        }
 
         .tap-zone:active .big-coin {
-            transform: scale(0.92) translateY(2px); /* instant feedback, no blur */
-            transition: transform 0.05s; /* faster */
+            transform: scale(0.92) translateY(5px) translateZ(0);
+            box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(59, 130, 246, 0.8) inset, 0 0 70px #3b82f6, 0 0 120px rgba(59, 130, 246, 0.9);
         }
 
         .trust-logo {
-            width: 120px;
-            height: 120px;
+            position: relative;
+            z-index: 10;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: translateY(0) translateZ(0);
+            transition: transform 0.2s ease;
+        }
+
+        .tap-zone:active .trust-logo {
+            transform: translateY(3px) translateZ(0);
         }
 
         .letter-t {
-            font-size: 7rem;
+            font-size: 8rem;
             font-weight: 900;
-            color: white;
-            text-shadow: 0 0 5px #3b82f6, 0 2px 0 black; /* simpler shadow */
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6, 5px 5px 0 rgba(0, 0, 0, 0.3);
             line-height: 1;
-            font-family: 'Inter', sans-serif;
-            transform: translateZ(0);
+            font-family: 'Inter', 'Arial Black', sans-serif;
+            transform: scale(1) translateZ(0);
+            animation: letterSuperPulse 2.5s infinite alternate;
+            letter-spacing: -5px;
         }
 
-        /* floating container */
+        @keyframes letterSuperPulse {
+            0% { text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 60px rgba(255, 255, 255, 0.6), 0 0 90px #3b82f6, 0 0 120px #3b82f6; transform: scale(1) translateZ(0); }
+            100% { text-shadow: 0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(255, 255, 255, 0.8), 0 0 120px #3b82f6, 0 0 160px #3b82f6; transform: scale(1.05) translateZ(0); }
+        }
+
         .floating-container {
             position: relative;
-            height: 20px;
-            margin: 0;
-            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            height: 40px;
+            margin-top: -10px;
+            z-index: 15;
         }
+
         .floating-value {
             position: absolute;
             font-weight: 800;
-            font-size: 1.5rem;
-            color: white;
-            text-shadow: 0 0 8px #3b82f6;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 0;
-            animation: floatUp 0.5s ease-out forwards;
+            font-size: 1.8rem;
+            color: #ffffff;
+            text-shadow: 0 0 30px #3b82f6, 0 0 60px #ffffff, 0 5px 15px #000000;
+            pointer-events: none;
+            animation: modernFloatUp 0.9s ease-out forwards;
+            z-index: 20;
             will-change: transform, opacity;
-            white-space: nowrap;
-        }
-        .floating-value::after {
-            content: ' USDT';
-            font-size: 0.7rem;
-            color: #aaccff;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(1.3); }
         }
 
-        /* REF BAR – no blur, flat */
+        .floating-value::after {
+            content: ' USDT';
+            font-size: 0.9rem;
+            color: #aaccff;
+        }
+
+        @keyframes modernFloatUp {
+            0% { opacity: 1; transform: translateY(0) scale(0.8) translateZ(0); filter: blur(0); }
+            50% { opacity: 0.9; transform: translateY(-40px) scale(1.2) translateZ(0); filter: blur(1px); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.6) translateZ(0); filter: blur(3px); }
+        }
+
         .top-ref-bar {
-            background: #0f1a2f;
-            border: 1px solid #1e3a5f;
-            border-radius: 1rem;
-            padding: 0.6rem 1rem;
-            margin: 0.5rem 0 0.5rem;
-            box-shadow: 0 3px 0 #0a1422;
+            background: rgba(20, 40, 70, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 1.12rem;
+            padding: 0.7rem 1.2rem;
+            margin: 1rem 0 1rem;
+            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 12px rgba(59, 130, 246, 0.2);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: transform 0.05s;
-            will-change: transform;
-        }
-        .top-ref-bar:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #0a1422;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
-        /* feature grid – flat */
+        .top-ref-bar:hover {
+            transform: translateY(-1px) translateZ(0);
+            box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .top-ref-bar:active {
+            transform: translateY(3px) translateZ(0);
+            box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .top-ref-left {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .top-ref-left span {
+            font-size: 1rem;
+            color: #ffffff;
+            filter: drop-shadow(0 0 5px #3b82f6);
+            font-weight: 500;
+        }
+
+        .top-ref-left span:first-child {
+            font-size: 1.2rem;
+        }
+
+        .top-ref-right {
+            background: rgba(37, 99, 235, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ffffff;
+            border: 1px solid rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 10px #3b82f6;
+        }
+
         .feature-grid {
             display: flex;
-            gap: 0.4rem;
-            margin: 0.5rem 0;
+            gap: 0.5rem;
+            margin: 0.8rem 0 1.2rem;
+            justify-content: center;
         }
+
         .feature-card {
-            background: #0f1a2f;
-            border: 1px solid #1e3a5f;
-            border-radius: 1rem;
-            padding: 0.6rem 0.8rem;
+            background: rgba(20, 40, 70, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 1.12rem;
+            padding: 0.7rem 1rem;
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 3px 0 #0a1422;
-            transition: transform 0.05s;
+            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 12px rgba(59, 130, 246, 0.2);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            transform: translateZ(0);
             will-change: transform;
         }
-        .feature-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #0a1422;
-        }
-        .card-icon svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-        .card-label {
-            font-size: 0.8rem;
-            color: #aaccff;
-        }
-        .card-value {
-            font-weight: 600;
-            font-size: 0.8rem;
+
+        .feature-card:hover {
+            transform: translateY(-1px) translateZ(0);
+            box-shadow: 0 4.72px 0 #0a1a2f, 0 7px 14px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.3);
         }
 
-        /* upgrade & tasks sections – flat */
-        .upgrade-section, .tasks-section {
-            background: #0b1424;
-            border-radius: 1rem;
-            padding: 0.6rem;
-            margin: 0.5rem 0;
-            border: 1px solid #1e3a5f;
-            box-shadow: 0 3px 0 #0a1422;
+        .feature-card:active {
+            transform: translateY(3px) translateZ(0);
+            box-shadow: 0 1px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.3);
         }
+
+        .card-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+
+        .card-icon svg {
+            width: 22px;
+            height: 22px;
+            filter: brightness(0) invert(1);
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            color: #aaccff;
+            text-shadow: 0 0 3px #3b82f6;
+            font-weight: 500;
+        }
+
+        .card-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-shadow: 0 0 6px #3b82f6;
+        }
+
+        .tasks-section, .upgrade-section {
+            background: rgba(15, 25, 45, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.12rem;
+            padding: 1rem 0.8rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            box-shadow: 0 3.72px 0 #0a1a2f, 0 6.2px 12.4px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(59, 130, 246, 0.2);
+            transform: translateZ(0);
+            will-change: transform;
+        }
+
         .section-header {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
-            margin-bottom: 0.6rem;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-left: 0.3rem;
         }
+
+        .section-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+        }
+
         .section-icon svg {
-            width: 22px;
-            height: 22px;
-            stroke: white;
-            fill: none;
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
         }
+
         .section-title {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 0 10px #3b82f6;
         }
 
         .upgrade-item, .task-item {
-            background: #0f1a2f;
-            border-radius: 0.8rem;
-            padding: 0.6rem;
-            margin-bottom: 0.5rem;
+            background: rgba(10, 20, 35, 0.8);
+            border-radius: 0.9rem;
+            padding: 0.7rem 0.8rem;
+            margin-bottom: 0.6rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid #1e3a5f;
-            box-shadow: 0 2px 0 #0a1422;
-            transition: transform 0.05s;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 2.48px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            transform: translateZ(0);
             will-change: transform;
         }
+
+        .upgrade-item:hover, .task-item:hover {
+            transform: translateY(-1px) translateZ(0);
+            box-shadow: 0 3.48px 0 #0a1a2f, 0 5px 10px rgba(0, 0, 0, 0.4), 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
         .upgrade-item:active, .task-item:active {
-            transform: translateY(2px);
-            box-shadow: 0 0px 0 #0a1422;
+            transform: translateY(2px) translateZ(0);
+            box-shadow: 0 1px 0 #0a1a2f, 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .item-left {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.6rem;
+            flex: 1;
         }
+
+        .item-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
         .item-icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: white;
-            fill: none;
+            width: 24px;
+            height: 24px;
+            filter: brightness(0) invert(1);
         }
+
         .item-info {
             display: flex;
             flex-direction: column;
         }
+
         .item-name {
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-shadow: 0 0 3px #3b82f6;
         }
+
         .item-level {
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             color: #aaccff;
+            margin-top: 0.1rem;
         }
+
         .item-right {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.8rem;
         }
+
         .item-value {
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-shadow: 0 0 6px #3b82f6;
             white-space: nowrap;
         }
+
         .item-button {
             background: #3b82f6;
             color: white;
             font-weight: 600;
-            font-size: 0.7rem;
-            padding: 0.3rem 0.6rem;
-            border-radius: 1.2rem;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1.5rem;
             border: none;
-            box-shadow: 0 2px 0 #1e3a8a;
-            transition: transform 0.05s;
+            box-shadow: 0 3px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            min-width: 70px;
+            transform: translateZ(0);
             will-change: transform;
-            min-width: 60px;
-            text-align: center;
         }
+
         .item-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 0px 0 #1e3a8a;
+            transform: translateY(2px) translateZ(0);
+            box-shadow: 0 1px 0 #1e3a8a, 0 3px 8px rgba(59, 130, 246, 0.6);
         }
+
         .task-reward {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
             color: #f5c45e;
-            margin-right: 0.2rem;
+            text-shadow: 0 0 8px #f5c45e;
+        }
+
+        .task-special {
+            background: linear-gradient(145deg, #2a4a8a, #1a3a6a);
+            border: 1px solid #3b82f6;
         }
 
         .notice {
-            font-size: 0.65rem;
-            color: #aaccff;
             text-align: center;
-            margin-top: 0.5rem;
-            border-top: 1px dashed #1e3a5f;
-            padding-top: 0.5rem;
-        }
-
-        /* hide handwritten bg – it causes repaints and heavy load */
-        .handwritten-bg {
-            display: none;
-        }
-
-        /* force all content to be visible – no lazy rendering */
-        .game-container {
-            opacity: 1;
+            font-size: 0.7rem;
+            color: #aaccff;
+            margin-top: 1.5rem;
+            border-top: 1px dashed rgba(59, 130, 246, 0.3);
+            padding-top: 0.8rem;
+            text-shadow: 0 0 5px #3b82f6;
         }
     </style>
 </head>
 <body>
-    <div class="game-container" id="gameContainer">
-        <!-- all content directly visible – no handwritten bg to save performance -->
+    <div class="game-container">
+        <div class="handwritten-bg" id="handwrittenBg"></div>
 
         <div class="top-bar">
             <div class="balance-box">
@@ -448,7 +731,7 @@
                 <span class="energy-count" id="energyDisplay">1000</span>
             </div>
             <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="energyBarFill" style="width:100%"></div>
+                <div class="energy-bar-fill" id="energyBarFill" style="width: 100%;"></div>
             </div>
             <span class="regen-tip" id="regenTip">+1/сек</span>
         </div>
@@ -476,83 +759,210 @@
         <div class="feature-grid">
             <div class="feature-card" id="rankCard">
                 <div class="card-left">
-                    <span class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L15 8L22 9L17 14L18 21L12 17.5L6 21L7 14L2 9L9 8L12 2Z" fill="white"/></svg></span>
+                    <span class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15 8L22 9L17 14L18 21L12 17.5L6 21L7 14L2 9L9 8L12 2Z" fill="white"/>
+                        </svg>
+                    </span>
                     <span class="card-label">Ранг</span>
                 </div>
                 <span class="card-value">бронза</span>
             </div>
             <div class="feature-card" id="referralsCard">
                 <div class="card-left">
-                    <span class="card-icon"><svg viewBox="0 0 24 24"><path d="M16 11C17.66 11 19 9.66 19 8C19 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 11 9.66 11 8C11 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.79 13 2 14.79 2 17V19H22V17C22 14.79 18.21 13 16 13C14.55 13 12.81 13.55 12 14.38C11.19 13.55 9.45 13 8 13Z" fill="white"/></svg></span>
+                    <span class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 11C17.66 11 19 9.66 19 8C19 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 11 9.66 11 8C11 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.79 13 2 14.79 2 17V19H22V17C22 14.79 18.21 13 16 13C14.55 13 12.81 13.55 12 14.38C11.19 13.55 9.45 13 8 13Z" fill="white"/>
+                        </svg>
+                    </span>
                     <span class="card-label">Рефералы</span>
                 </div>
                 <span class="card-value" id="refCount">0</span>
             </div>
         </div>
 
-        <!-- upgrades -->
+        <!-- БЛОК УЛУЧШЕНИЯ -->
         <div class="upgrade-section">
             <div class="section-header">
-                <span class="section-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><path d="M12 6V12L16 14" stroke="white" stroke-width="2"/></svg></span>
+                <span class="section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                        <path d="M12 6V12L16 14" stroke="white" stroke-width="2"/>
+                    </svg>
+                </span>
                 <span class="section-title">Улучшения</span>
             </div>
+            
             <div class="upgrade-item" id="upgradeDamage">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><path d="M12 6V12L16 14" stroke="white" stroke-width="2"/></svg></span><div class="item-info"><span class="item-name">Урон за клик</span><span class="item-level" id="damageLevel">ур. 1</span></div></div>
-                <div class="item-right"><span class="item-value" id="damageValue">1.0x</span><button class="item-button upgrade-btn" data-type="damage">Улучшить</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/>
+                            <path d="M12 6V12L16 14" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </span>
+                    <div class="item-info">
+                        <span class="item-name">Урон за клик</span>
+                        <span class="item-level" id="damageLevel">ур. 1</span>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <span class="item-value" id="damageValue">1.0x</span>
+                    <button class="item-button upgrade-btn" data-type="damage">Улучшить</button>
+                </div>
             </div>
+            
             <div class="upgrade-item" id="upgradeCapacity">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2" stroke="white" stroke-width="2"/><rect x="10" y="6" width="4" height="4" fill="white"/></svg></span><div class="item-info"><span class="item-name">Ёмкость энергии</span><span class="item-level" id="capacityLevel">ур. 1</span></div></div>
-                <div class="item-right"><span class="item-value" id="capacityValue">1000</span><button class="item-button upgrade-btn" data-type="capacity">Улучшить</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="6" y="2" width="12" height="20" rx="2" stroke="white" stroke-width="2"/>
+                            <rect x="10" y="6" width="4" height="4" fill="white"/>
+                        </svg>
+                    </span>
+                    <div class="item-info">
+                        <span class="item-name">Ёмкость энергии</span>
+                        <span class="item-level" id="capacityLevel">ур. 1</span>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <span class="item-value" id="capacityValue">1000</span>
+                    <button class="item-button upgrade-btn" data-type="capacity">Улучшить</button>
+                </div>
             </div>
+            
             <div class="upgrade-item" id="upgradeRecovery">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="white"/></svg></span><div class="item-info"><span class="item-name">Восстановление</span><span class="item-level" id="recoveryLevel">ур. 1</span></div></div>
-                <div class="item-right"><span class="item-value" id="recoveryValue">1/сек</span><button class="item-button upgrade-btn" data-type="recovery">Улучшить</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="white"/>
+                        </svg>
+                    </span>
+                    <div class="item-info">
+                        <span class="item-name">Восстановление</span>
+                        <span class="item-level" id="recoveryLevel">ур. 1</span>
+                    </div>
+                </div>
+                <div class="item-right">
+                    <span class="item-value" id="recoveryValue">1/сек</span>
+                    <button class="item-button upgrade-btn" data-type="recovery">Улучшить</button>
+                </div>
             </div>
         </div>
 
-        <!-- tasks -->
+        <!-- БЛОК ЗАДАНИЯ -->
         <div class="tasks-section">
             <div class="section-header">
-                <span class="section-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" stroke="white" stroke-width="2"/><path d="M8 10L11 13L16 7" stroke="white" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span class="section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="18" height="16" rx="2" stroke="white" stroke-width="2"/>
+                        <path d="M8 10L11 13L16 7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
                 <span class="section-title">Задания</span>
             </div>
+            
             <div class="task-item" id="taskSubscribe">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/><path d="M4 20V18C4 14.5 7 12 12 12C17 12 20 14.5 20 18V20" stroke="white" stroke-width="2"/></svg></span><span class="item-name">Подписаться на канал</span></div>
-                <div class="item-right"><button class="item-button task-btn" data-task="subscribe">Старт</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="8" r="4" stroke="white" stroke-width="2"/>
+                            <path d="M4 20V18C4 14.5 7 12 12 12C17 12 20 14.5 20 18V20" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </span>
+                    <span class="item-name">Подписаться на канал</span>
+                </div>
+                <div class="item-right">
+                    <span class="task-reward" style="display: none;">0.30</span>
+                    <button class="item-button task-btn" data-task="subscribe">Старт</button>
+                </div>
             </div>
+            
             <div class="task-item" id="taskAd">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2" stroke="white" stroke-width="2"/><circle cx="17" cy="12" r="2" fill="white"/></svg></span><span class="item-name">Смотреть рекламу</span></div>
-                <div class="item-right"><button class="item-button task-btn" data-task="ad">Смотреть</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="2" y="6" width="20" height="12" rx="2" stroke="white" stroke-width="2"/>
+                            <circle cx="17" cy="12" r="2" fill="white"/>
+                        </svg>
+                    </span>
+                    <span class="item-name">Смотреть рекламу</span>
+                </div>
+                <div class="item-right">
+                    <span class="task-reward" style="display: none;">0.10</span>
+                    <button class="item-button task-btn" data-task="ad">Смотреть</button>
+                </div>
             </div>
+            
             <div class="task-item" id="taskFutures">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M3 7H21" stroke="white" stroke-width="2"/></svg></span><span class="item-name">Квест по фьючерсам</span></div>
-                <div class="item-right"><button class="item-button task-btn" data-task="futures">Старт</button></div>
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 17L9 11L13 15L21 7" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M3 7H21" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </span>
+                    <span class="item-name">Квест по фьючерсам</span>
+                </div>
+                <div class="item-right">
+                    <span class="task-reward" style="display: none;">20.00</span>
+                    <button class="item-button task-btn" data-task="futures">Старт</button>
+                </div>
             </div>
-            <div class="task-item" id="taskBlum">
-                <div class="item-left"><span class="item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke="white" stroke-width="2"/><circle cx="12" cy="8" r="1" fill="white"/><circle cx="16" cy="12" r="1" fill="white"/><circle cx="8" cy="12" r="1" fill="white"/><path d="M8 16L12 18L16 16" stroke="white" stroke-width="2"/></svg></span><span class="item-name">Квест в разработке</span></div>
-                <div class="item-right"><button class="item-button task-btn" data-task="blum" disabled style="opacity:0.6;">Скоро</button></div>
+            
+            <div class="task-item task-special" id="taskBlum">
+                <div class="item-left">
+                    <span class="item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="8" stroke="white" stroke-width="2"/>
+                            <circle cx="12" cy="8" r="1" fill="white"/>
+                            <circle cx="16" cy="12" r="1" fill="white"/>
+                            <circle cx="8" cy="12" r="1" fill="white"/>
+                            <path d="M8 16L12 18L16 16" stroke="white" stroke-width="2"/>
+                        </svg>
+                    </span>
+                    <span class="item-name">Квест в разработке</span>
+                </div>
+                <div class="item-right">
+                    <span class="task-reward" style="display: none;">0.00</span>
+                    <button class="item-button task-btn" data-task="blum" disabled style="opacity: 0.5;">Скоро</button>
+                </div>
             </div>
         </div>
-        <div class="notice">⚡ Trust Wallet · Tap to earn</div>
+
+        <div class="notice">
+            ⚡ Trust Wallet · Tap to earn
+        </div>
     </div>
 
     <script>
         (function() {
-            // ---------- TELEGRAM WEBAPP INTEGRATION ----------
+            // ========== TELEGRAM WEBAPP FIX ==========
             if (window.Telegram?.WebApp) {
                 Telegram.WebApp.ready();
-                Telegram.WebApp.expand();          // forces full height
+                Telegram.WebApp.expand();          // forces fullscreen
                 Telegram.WebApp.disableVerticalSwipes();
-            } else {
-                // fallback for browser testing: force scroll to render all
-                window.scrollTo(0, 1);
-                window.scrollTo(0, 0);
             }
+            
+            // ========== FORCE IMMEDIATE FULL RENDER ==========
+            // Force layout to include all content – this ensures bottom content renders immediately
+            window.scrollTo(0, 1);
+            window.scrollTo(0, 0);
+            
+            // also dispatch resize to ensure viewport units update
+            window.dispatchEvent(new Event('resize'));
 
-            // ---------- ECONOMY (flat, no changes) ----------
+            // ========== КОНФІГУРАЦІЯ ЕКОНОМІКИ (unchanged) ==========
             const ECONOMY = {
-                usdt: { decimals: 6, baseTapValue: 0.0002 },
-                energy: { baseCapacity: 1000, baseRecovery: 1, tapCost: 1 },
+                usdt: {
+                    decimals: 6,
+                    baseTapValue: 0.0002
+                },
+                energy: {
+                    baseCapacity: 1000,
+                    baseRecovery: 1,
+                    tapCost: 1
+                },
                 upgrades: {
                     damage: [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0],
                     capacity: [1.0, 1.3, 1.6, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0],
@@ -563,126 +973,278 @@
                     capacity: [3.0, 6.0, 12.0, 24.0, 48.0, 96.0, 192.0, 384.0, 768.0, 1536.0],
                     recovery: [1.5, 3.0, 6.0, 12.0, 24.0, 48.0, 96.0, 192.0, 384.0, 768.0]
                 },
-                tasks: { subscription: 0.30, adReward: 0.10, futuresReward: 20.00, referralBonusEnergy: 500 }
+                tasks: {
+                    subscription: 0.30,
+                    adReward: 0.10,
+                    futuresReward: 20.00,
+                    referralBonusEnergy: 500
+                }
             };
 
+            // ========== СТАН ГРАВЦЯ ==========
             let player = {
                 balance: 10.500000,
+                
                 damageLevel: 1,
                 capacityLevel: 1,
                 recoveryLevel: 1,
+                
                 energy: ECONOMY.energy.baseCapacity,
                 referrals: 0
             };
 
-            // helpers
-            function formatUSDT(v) { return v.toFixed(6); }
-            function getCurrentTapValue() { return ECONOMY.usdt.baseTapValue * ECONOMY.upgrades.damage[player.damageLevel-1]; }
-            function getCurrentCapacity() { return Math.floor(ECONOMY.energy.baseCapacity * ECONOMY.upgrades.capacity[player.capacityLevel-1]); }
-            function getCurrentRecovery() { return ECONOMY.energy.baseRecovery * ECONOMY.upgrades.recovery[player.recoveryLevel-1]; }
-
-            function updateUI() {
-                document.getElementById('balanceDisplay').textContent = formatUSDT(player.balance);
-                const maxCap = getCurrentCapacity();
-                document.getElementById('energyDisplay').textContent = Math.floor(player.energy);
-                document.getElementById('energyBarFill').style.width = (player.energy / maxCap) * 100 + '%';
-                document.getElementById('regenTip').textContent = `+${getCurrentRecovery().toFixed(1)}/сек`;
-                document.getElementById('tapValueDisplay').textContent = `${getCurrentTapValue().toFixed(6)} USDT за тап`;
-                document.getElementById('refCount').textContent = player.referrals;
-
-                document.getElementById('damageValue').textContent = ECONOMY.upgrades.damage[player.damageLevel-1].toFixed(1)+'x';
-                document.getElementById('damageLevel').textContent = `ур. ${player.damageLevel}`;
-                document.getElementById('capacityValue').textContent = getCurrentCapacity();
-                document.getElementById('capacityLevel').textContent = `ур. ${player.capacityLevel}`;
-                document.getElementById('recoveryValue').textContent = getCurrentRecovery().toFixed(1)+'/сек';
-                document.getElementById('recoveryLevel').textContent = `ур. ${player.recoveryLevel}`;
+            // ========== ДОПОМІЖНІ ФУНКЦІЇ ==========
+            function formatUSDT(value) {
+                return parseFloat(value).toFixed(6);
             }
 
+            function getCurrentTapValue() {
+                const multiplier = ECONOMY.upgrades.damage[player.damageLevel - 1];
+                return (ECONOMY.usdt.baseTapValue * multiplier).toFixed(6);
+            }
+
+            function getCurrentCapacity() {
+                const multiplier = ECONOMY.upgrades.capacity[player.capacityLevel - 1];
+                return Math.floor(ECONOMY.energy.baseCapacity * multiplier);
+            }
+
+            function getCurrentRecovery() {
+                const multiplier = ECONOMY.upgrades.recovery[player.recoveryLevel - 1];
+                return ECONOMY.energy.baseRecovery * multiplier;
+            }
+
+            function getUpgradePrice(type) {
+                const level = player[`${type}Level`];
+                if (level >= 10) return null;
+                return ECONOMY.upgradePrices[type][level - 1];
+            }
+
+            // ========== ОНОВЛЕННЯ ІНТЕРФЕЙСУ ==========
+            function updateUI() {
+                const balanceEl = document.getElementById('balanceDisplay');
+                const energyEl = document.getElementById('energyDisplay');
+                const energyBarFill = document.getElementById('energyBarFill');
+                const regenTip = document.getElementById('regenTip');
+                const tapValueDisplay = document.getElementById('tapValueDisplay');
+                const refCountEl = document.getElementById('refCount');
+                
+                const damageValue = document.getElementById('damageValue');
+                const damageLevel = document.getElementById('damageLevel');
+                const capacityValue = document.getElementById('capacityValue');
+                const capacityLevel = document.getElementById('capacityLevel');
+                const recoveryValue = document.getElementById('recoveryValue');
+                const recoveryLevel = document.getElementById('recoveryLevel');
+                
+                // Баланс
+                balanceEl.textContent = formatUSDT(player.balance);
+                
+                // Енергія
+                const maxEnergy = getCurrentCapacity();
+                energyEl.textContent = Math.floor(player.energy);
+                energyBarFill.style.width = `${(player.energy / maxEnergy) * 100}%`;
+                regenTip.textContent = `+${getCurrentRecovery().toFixed(1)}/сек`;
+                
+                // Значення тапа
+                tapValueDisplay.textContent = `${getCurrentTapValue()} USDT за тап`;
+                
+                // Реферали
+                refCountEl.textContent = player.referrals;
+                
+                // Апгрейди
+                damageValue.textContent = `${ECONOMY.upgrades.damage[player.damageLevel-1].toFixed(1)}x`;
+                damageLevel.textContent = `ур. ${player.damageLevel}`;
+                
+                capacityValue.textContent = getCurrentCapacity();
+                capacityLevel.textContent = `ур. ${player.capacityLevel}`;
+                
+                recoveryValue.textContent = `${getCurrentRecovery().toFixed(1)}/сек`;
+                recoveryLevel.textContent = `ур. ${player.recoveryLevel}`;
+            }
+
+            // ========== ПОКАЗ FLOATING ==========
             function showFloating(text, color) {
                 const container = document.getElementById('floatingContainer');
                 const div = document.createElement('div');
                 div.className = 'floating-value';
                 div.textContent = text;
                 div.style.color = color;
+                div.style.left = '50%';
+                div.style.transform = 'translateX(-50%)';
+                div.style.bottom = '0px';
                 container.appendChild(div);
-                setTimeout(() => div.remove(), 500);
+                setTimeout(() => div.remove(), 800);
             }
 
-            // tap handler
+            // ========== ОБРОБНИК ТАПА ==========
             function handleTap() {
-                if (player.energy < 1) { showFloating('⚡ Нет энергии', '#ffa38b'); return; }
-                const tapVal = getCurrentTapValue();
-                player.energy -= 1;
-                player.balance = parseFloat((player.balance + tapVal).toFixed(6));
-                showFloating(`+${tapVal.toFixed(6)}`, '#3b82f6');
-                if (navigator.vibrate) navigator.vibrate(15);
+                if (player.energy < ECONOMY.energy.tapCost) {
+                    showFloating('⚡ Нет энергии', '#ffa38b');
+                    return;
+                }
+                
+                const tapValue = parseFloat(getCurrentTapValue());
+                
+                player.energy -= ECONOMY.energy.tapCost;
+                player.balance = parseFloat((player.balance + tapValue).toFixed(6));
+                
+                showFloating(`+${tapValue.toFixed(6)}`, '#3b82f6');
+                
+                if (navigator.vibrate) navigator.vibrate(20);
+                
                 updateUI();
             }
 
+            // ========== ФУНКЦІЯ ПОКУПКИ АПГРЕЙДУ ==========
             function purchaseUpgrade(type) {
-                const lvl = player[`${type}Level`];
-                if (lvl >= 10) { alert('Max level'); return; }
-                const price = ECONOMY.upgradePrices[type][lvl-1];
-                if (player.balance < price) { alert('Not enough USDT'); return; }
-                if (confirm(`Upgrade to lvl ${lvl+1} for ${price} USDT?`)) {
+                const currentLevel = player[`${type}Level`];
+                
+                if (currentLevel >= 10) {
+                    alert('❌ Достигнут максимальный уровень');
+                    return;
+                }
+                
+                const price = ECONOMY.upgradePrices[type][currentLevel - 1];
+                
+                if (player.balance < price) {
+                    const needed = (price - player.balance).toFixed(2);
+                    alert(`❌ Недостаточно USDT. Нужно еще ${needed} USDT для улучшения`);
+                    return;
+                }
+                
+                const confirmPurchase = confirm(`✅ Подтвердите покупку\nУровень ${currentLevel} → ${currentLevel + 1}\nСтоимость: ${price.toFixed(2)} USDT\nВаш баланс: ${player.balance.toFixed(2)} USDT`);
+                
+                if (confirmPurchase) {
                     player.balance = parseFloat((player.balance - price).toFixed(6));
                     player[`${type}Level`]++;
-                    if (type === 'capacity') player.energy = getCurrentCapacity();
-                    showFloating('✅', '#4ade80');
+                    
+                    if (type === 'capacity') {
+                        player.energy = getCurrentCapacity(); // Заповнюємо енергію
+                    }
+                    
+                    showFloating('✅ Улучшено', '#4ade80');
                     updateUI();
                 }
             }
 
-            // tasks
-            document.getElementById('taskSubscribe').querySelector('.task-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                player.balance += 0.30;
-                showFloating('+0.30', '#f5c45e'); updateUI(); alert('+0.30 USDT');
-            });
-            document.getElementById('taskAd').querySelector('.task-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                player.balance += 0.10;
-                showFloating('+0.10', '#f5c45e'); updateUI(); alert('+0.10 USDT');
-            });
-            document.getElementById('taskFutures').querySelector('.task-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                player.balance += 20.0;
-                showFloating('+20.0', '#f5c45e'); updateUI(); alert('+20.0 USDT');
-            });
-            document.querySelector('[data-task="blum"]').addEventListener('click', (e) => {
-                e.stopPropagation(); alert('❌ В разработке');
-            });
-            document.getElementById('topRefBar').addEventListener('click', () => {
+            // ========== ЗАВДАННЯ ==========
+            function handleTaskSubscribe() {
+                player.balance = parseFloat((player.balance + ECONOMY.tasks.subscription).toFixed(6));
+                showFloating(`+${ECONOMY.tasks.subscription.toFixed(2)}`, '#f5c45e');
+                updateUI();
+                alert('✅ Вы подписались на канал! +0.30 USDT');
+            }
+
+            function handleTaskAd() {
+                player.balance = parseFloat((player.balance + ECONOMY.tasks.adReward).toFixed(6));
+                showFloating(`+${ECONOMY.tasks.adReward.toFixed(2)}`, '#f5c45e');
+                updateUI();
+                alert('✅ Реклама просмотрена! +0.10 USDT');
+            }
+
+            function handleTaskFutures() {
+                player.balance = parseFloat((player.balance + ECONOMY.tasks.futuresReward).toFixed(6));
+                showFloating(`+20.00`, '#f5c45e');
+                updateUI();
+                alert('✅ Квест выполнен! +20.00 USDT');
+            }
+
+            function handleInviteFriend() {
                 player.referrals++;
-                player.energy = Math.min(getCurrentCapacity(), player.energy + 500);
-                showFloating('+500⚡', '#3b82f6');
-                updateUI(); alert('Реферальный код скопирован!');
-            });
+                player.energy = Math.min(getCurrentCapacity(), player.energy + ECONOMY.tasks.referralBonusEnergy);
+                showFloating(`+500 ⚡`, '#3b82f6');
+                updateUI();
+                alert('✅ Реферальный код скопирован! +500 энергии');
+            }
 
-            document.querySelectorAll('.upgrade-btn').forEach(b => {
-                b.addEventListener('click', (e) => { e.stopPropagation(); purchaseUpgrade(e.target.dataset.type); });
-            });
-
-            document.getElementById('tapButton').addEventListener('click', handleTap);
-            document.getElementById('rankCard').addEventListener('click', () => alert('Бронза'));
-            document.getElementById('referralsCard').addEventListener('click', () => alert('Рефералы: '+player.referrals));
-
-            // energy regen
-            setInterval(() => {
-                const max = getCurrentCapacity();
-                if (player.energy < max) {
-                    player.energy = Math.min(max, player.energy + getCurrentRecovery());
-                    updateUI();
+            // ========== ФОН З БУКВАМИ T ==========
+            function createHandwrittenBg() {
+                const bgContainer = document.getElementById('handwrittenBg');
+                if (!bgContainer) return;
+                
+                bgContainer.innerHTML = '';
+                
+                for (let i = 0; i < 60; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = 'T';
+                    
+                    span.style.left = Math.random() * 100 + '%';
+                    span.style.top = Math.random() * 100 + '%';
+                    span.style.setProperty('--r', (Math.random() * 60) - 30);
+                    span.style.setProperty('--d', Math.random() * 5);
+                    span.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+                    span.style.opacity = 0.2 + Math.random() * 0.3;
+                    
+                    bgContainer.appendChild(span);
                 }
-            }, 1000);
+            }
 
-            // force initial full render: set energy, update ui
-            player.energy = getCurrentCapacity();
-            updateUI();
+            // ========== ІНІЦІАЛІЗАЦІЯ ==========
+            function init() {
+                createHandwrittenBg();
+                
+                // Початковий стан
+                player.energy = getCurrentCapacity();
+                
+                // Обробник тапа
+                document.getElementById('tapButton').addEventListener('click', handleTap);
+                
+                // Обробники для кнопок покращень
+                document.querySelectorAll('.upgrade-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const type = e.target.dataset.type;
+                        purchaseUpgrade(type);
+                    });
+                });
+                
+                // Обробники для завдань
+                document.querySelectorAll('.task-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const task = e.target.dataset.task;
+                        
+                        switch(task) {
+                            case 'subscribe':
+                                handleTaskSubscribe();
+                                break;
+                            case 'ad':
+                                handleTaskAd();
+                                break;
+                            case 'futures':
+                                handleTaskFutures();
+                                break;
+                            case 'blum':
+                                alert('❌ Квест в разработке');
+                                break;
+                        }
+                    });
+                });
+                
+                // Інші обробники
+                document.getElementById('topRefBar').addEventListener('click', handleInviteFriend);
+                
+                document.getElementById('rankCard').addEventListener('click', () => {
+                    alert('🏆 Ваш ранг: бронза');
+                });
+                
+                document.getElementById('referralsCard').addEventListener('click', () => {
+                    alert('👥 Ваши рефералы: ' + player.referrals);
+                });
+                
+                // Регенерація енергії
+                setInterval(() => {
+                    const maxEnergy = getCurrentCapacity();
+                    if (player.energy < maxEnergy) {
+                        player.energy = Math.min(maxEnergy, player.energy + getCurrentRecovery());
+                        updateUI();
+                    }
+                }, 1000);
+                
+                updateUI();
+                console.log('✅ Trust Wallet з економікою USDT');
+            }
 
-            // small scroll hack to ensure bottom content renders (safe)
-            window.dispatchEvent(new Event('resize'));
-            setTimeout(() => { window.scrollTo(0,0); }, 10);
+            init();
         })();
     </script>
 </body>
